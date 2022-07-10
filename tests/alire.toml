@@ -1,0 +1,14 @@
+name = "rtmidi_tests"
+description = "Rtmidi tests"
+version = "0.0.0"
+
+authors = ["Shuihuzhuan"]
+maintainers = ["Shuihuzhuan <shuihuzhuan@free.fr>"]
+
+executables = ["rtmidi_tests"]
+
+[[depends-on]]  # Added by alr
+rtmidi = "*"  # Added by alr
+
+[[pins]]
+rtmidi = { path = ".." }

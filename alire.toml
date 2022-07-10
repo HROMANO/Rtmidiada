@@ -1,0 +1,6 @@
+name = "rtmidi"
+description = "Ada binding to RtMidi"
+version = "1.0.0"
+
+authors = ["shuihuzhuan@free.fr"]
+maintainers = ["Shuihuzhuan <shuihuzhuan@free.fr>"]
