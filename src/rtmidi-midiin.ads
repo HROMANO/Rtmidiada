@@ -1,3 +1,5 @@
+with Ada.Finalization;
+
 package RtMidi.MidiIn is
 
     type MidiIn is tagged limited private;
@@ -17,12 +19,12 @@ package RtMidi.MidiIn is
                         number : Natural)
         return String;
 
+	procedure create (self           : in out MidiIn);
+
     procedure create (self           : in out MidiIn;
                       api            : RtMidiApi := RTMIDI_API_UNSPECIFIED;
                       clientName     : String := "RtMidi Input Client";
                       queueSizeLimit : Positive := 100);
-
-    procedure free (self : in out MidiIn);
 
     function get_current_api (self : in out MidiIn) return RtMidiApi;
 
@@ -56,14 +58,13 @@ package RtMidi.MidiIn is
 
 private
 
-    function create_default
-        return RtMidiPtr
-    with Import        => True,
-         Convention    => C,
-         External_Name => "rtmidi_in_create_default";
-
-    type MidiIn is tagged limited record
-        device : RtMidiPtr := create_default;
+    type MidiIn is new Ada.Finalization.Limited_Controlled with record
+        device : RtMidiPtr := null;
     end record;
+
+    procedure free (self : in out MidiIn);
+
+	overriding
+	procedure Finalize (self : in out MidiIn);
 
 end RtMidi.MidiIn;

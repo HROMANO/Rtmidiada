@@ -43,6 +43,24 @@ package body RtMidi.MidiIn is
         return get_port_name(self.device, number);
     end port_name;
 
+	----------------------------------------------------------------------------
+	procedure create (self           : in out MidiIn) is
+
+		function create_default
+		    return RtMidiPtr
+		with Import        => True,
+		     Convention    => C,
+		     External_Name => "rtmidi_in_create_default";
+
+     begin
+     	if self.device /= null then
+     		self.free;
+ 		end if;
+
+		self.device := create_default;
+
+     end create;
+
     ----------------------------------------------------------------------------
     procedure create (self           : in out MidiIn;
                       api            : RtMidiApi := RTMIDI_API_UNSPECIFIED;
@@ -62,6 +80,10 @@ package body RtMidi.MidiIn is
             External_Name => "rtmidi_in_create";
 
     begin
+     	if self.device /= null then
+     		self.free;
+ 		end if;
+
         self.device := rtmidi_in_create(api,
 						                New_String(clientName),
 						                unsigned(queueSizeLimit));
@@ -77,6 +99,7 @@ package body RtMidi.MidiIn is
 
     begin
         rtmidi_in_free(self.device);
+        self.device := null;
     end free;
 
     ----------------------------------------------------------------------------
@@ -236,6 +259,13 @@ package body RtMidi.MidiIn is
         	New_Line;
     	end if;
     end put_message;
+
+	----------------------------------------------------------------------------
+	overriding
+	procedure Finalize (self : in out MidiIn) is
+	begin
+		self.free;
+	end Finalize;
 
 end RtMidi.MidiIn;
 

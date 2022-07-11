@@ -64,7 +64,7 @@ begin
         midi_in(i).open_port(0, "First");
         Put_Line("Current API: " & RtMidi.api_display_name(midi_in(i).get_current_api));
         midi_in(i).close_port;
-        midi_in(i).free;
+        -- midi_in(i).free;
         Put_Line("-----------");
 
         RtMidi.MidiOut.create(midi_out(i), apis(i));
