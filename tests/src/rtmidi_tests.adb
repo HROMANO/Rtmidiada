@@ -77,7 +77,6 @@ begin
         midi_out(i).open_port(0, "First");
         Put_Line("Current API: " & RtMidi.api_display_name(midi_out(i).get_current_api));
         midi_out(i).close_port;
-        midi_out(i).free;
         Put_Line("-----------");
 
         New_Line;

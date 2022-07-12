@@ -36,6 +36,24 @@
         return get_port_name(self.device, number);
     end port_name;
 
+	----------------------------------------------------------------------------
+	procedure create (self       : in out MidiOut) is
+
+		function create_default
+		    return RtMidiPtr
+		with Import        => True,
+		     Convention    => C,
+		     External_Name => "rtmidi_out_create_default";
+
+     begin
+     	if self.device /= null then
+     		self.free;
+ 		end if;
+
+		self.device := create_default;
+
+     end create;
+
     ----------------------------------------------------------------------------
     procedure create (self       : in out MidiOut;
                       api        : RtMidiApi := RTMIDI_API_UNSPECIFIED;
@@ -51,7 +69,12 @@
 		     External_Name => "rtmidi_out_create";
 
     begin
+    	if self.device /= null then
+     		self.free;
+ 		end if;
+
         self.device := rtmidi_out_create(api, New_String(clientName));
+
     end create;
 
     ----------------------------------------------------------------------------
@@ -64,6 +87,7 @@
 
     begin
         rtmidi_out_free(self.device);
+        self.device := null;
     end free;
 
     ----------------------------------------------------------------------------
