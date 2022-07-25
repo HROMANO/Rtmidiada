@@ -13,9 +13,9 @@ package RtMidi.MidiOut is
 
     procedure close_port (self : in out MidiOut);
 
-    function port_count (self : in out MidiOut) return Natural;
+    function port_count (self : MidiOut) return Natural;
 
-    function port_name (self   : in out MidiOut;
+    function port_name (self   : MidiOut;
                         number : Natural)
         return String;
 
@@ -25,15 +25,13 @@ package RtMidi.MidiOut is
                       api        : RtMidiApi := RTMIDI_API_UNSPECIFIED;
                       clientName : String := "RtMidi Output Client");
 
-    function get_current_api (self : in out MidiOut) return RtMidiApi;
+    function get_current_api (self : MidiOut) return RtMidiApi;
 
     function send_message (self    : in out MidiOut;
                            message : String)
         return Integer;
 
 private
-
-
 
     type MidiOut is new Ada.Finalization.Limited_Controlled with record
         device : RtMidiPtr := null;

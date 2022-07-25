@@ -71,10 +71,10 @@ private
 
     procedure close_port (device : in out RtMidiPtr);
 
-    function port_count (device : in out RtMidiPtr)
+    function port_count (device : RtMidiPtr)
         return Natural;
 
-    function get_port_name (device : in out RtMidiPtr;
+    function get_port_name (device : RtMidiPtr;
                             number : Natural := 0)
 		return String;
 

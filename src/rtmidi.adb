@@ -119,7 +119,7 @@ package body RtMidi is
     end close_port;
     
     ----------------------------------------------------------------------------
-    function port_count (device : in out RtMidiPtr) return Natural is
+    function port_count (device : RtMidiPtr) return Natural is
     
     	use Interfaces.C;
     	
@@ -134,7 +134,7 @@ package body RtMidi is
     end port_count;
     
     ----------------------------------------------------------------------------
-    function get_port_name (device : in out RtMidiPtr; 
+    function get_port_name (device : RtMidiPtr;
                             number : Natural := 0)
 		return String is
 

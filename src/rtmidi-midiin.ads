@@ -13,9 +13,9 @@ package RtMidi.MidiIn is
 
     procedure close_port (self : in out MidiIn);
 
-    function port_count (self : in out MidiIn) return Natural;
+    function port_count (self : MidiIn) return Natural;
 
-    function port_name (self   : in out MidiIn;
+    function port_name (self   : MidiIn;
                         number : Natural)
         return String;
 
@@ -26,7 +26,7 @@ package RtMidi.MidiIn is
                       clientName     : String := "RtMidi Input Client";
                       queueSizeLimit : Positive := 100);
 
-    function get_current_api (self : in out MidiIn) return RtMidiApi;
+    function get_current_api (self : MidiIn) return RtMidiApi;
 
     procedure ignore_types (self      : in out MidiIn;
                             midiSysex : boolean := True;
@@ -49,12 +49,12 @@ package RtMidi.MidiIn is
 				                user_data : access User_Data_Type);
 	end Callback;
 
-	function get_message (self : in out MidiIn; deltatime : out Float)
+	function get_message (self : MidiIn; deltatime : out Float)
     	return String;
 
-    function get_message (self : in out MidiIn) return String;
+    function get_message (self : MidiIn) return String;
 
-    procedure put_message (self : in out MidiIn);
+    procedure put_message (self : MidiIn);
 
 private
 

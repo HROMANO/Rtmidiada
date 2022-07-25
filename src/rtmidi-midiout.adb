@@ -22,14 +22,14 @@
     end close_port;
 
     ----------------------------------------------------------------------------
-    function port_count (self : in out MidiOut)
+    function port_count (self : MidiOut)
         return Natural is
     begin
         return port_count(self.device);
     end port_count;
 
     ----------------------------------------------------------------------------
-    function port_name (self   : in out MidiOut;
+    function port_name (self   : MidiOut;
                         number : Natural)
         return String is
     begin
@@ -91,7 +91,7 @@
     end free;
 
     ----------------------------------------------------------------------------
-    function get_current_api (self : in out MidiOut)
+    function get_current_api (self : MidiOut)
         return RtMidiApi is
 
 		function rtmidi_out_get_current_api (device : RtMidiPtr)

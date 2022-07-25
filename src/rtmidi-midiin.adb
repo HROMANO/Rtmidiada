@@ -29,14 +29,14 @@ package body RtMidi.MidiIn is
     end close_port;
 
     ----------------------------------------------------------------------------
-    function port_count (self : in out MidiIn)
+    function port_count (self : MidiIn)
         return Natural is
     begin
         return port_count(self.device);
     end port_count;
 
     ----------------------------------------------------------------------------
-    function port_name (self   : in out MidiIn;
+    function port_name (self   : MidiIn;
                         number : Natural)
         return String is
     begin
@@ -103,7 +103,7 @@ package body RtMidi.MidiIn is
     end free;
 
     ----------------------------------------------------------------------------
-    function get_current_api (self : in out MidiIn)
+    function get_current_api (self : MidiIn)
         return RtMidiApi is
 
         function rtmidi_in_get_current_api (device : RtMidiPtr)
@@ -198,7 +198,7 @@ package body RtMidi.MidiIn is
     end Callback;
 
     ----------------------------------------------------------------------------
-    function get_message (self : in out MidiIn; deltatime : out Float)
+    function get_message (self : MidiIn; deltatime : out Float)
     	return String is
 
 		use Interfaces.C;
@@ -237,14 +237,14 @@ package body RtMidi.MidiIn is
     end get_message;
 
     ----------------------------------------------------------------------------
-    function get_message (self : in out MidiIn) return String is
+    function get_message (self : MidiIn) return String is
     	deltatime : Float := 0.0;
     begin
     	return get_message(self, deltatime);
 	end get_message;
 
     ----------------------------------------------------------------------------
-    procedure put_message (self : in out MidiIn) is
+    procedure put_message (self : MidiIn) is
 
     	use Ada.Text_IO;
 
