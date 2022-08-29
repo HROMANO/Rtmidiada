@@ -169,9 +169,10 @@ package body RtMidi.MidiIn is
 		         External_Name => "rtmidi_in_set_callback";
 
 	        type Proxy is access procedure (deltatime : double;
-							 				message   : chars_ptr;
+							 				buffer    : char_array;
 							 				len       : size_t;
-										    user_data : access User_Data_Type);
+										    user_data : access User_Data_Type)
+										    with Convention => C;
 
             function Convert_User_Data is new Ada.Unchecked_Conversion
      			(User_Data_Access, System.Address);
@@ -180,12 +181,18 @@ package body RtMidi.MidiIn is
      			(Proxy, System.Address);
 
  			procedure cb (deltatime : double;
-         				  message   : chars_ptr;
+         				  buffer    : char_array;
+         				  len       : size_t;
+                          user_data : access User_Data_Type)
+            with Convention => C;
+
+            procedure cb (deltatime : double;
+         				  buffer    : char_array;
          				  len       : size_t;
                           user_data : access User_Data_Type) is
  			begin
  				callback(Float(deltatime),
- 				         To_Ada(Value(message, len), Trim_Nul => False),
+ 				         to_message(buffer, len),
  				         user_data);
  			end cb;
 
@@ -199,37 +206,40 @@ package body RtMidi.MidiIn is
 
     ----------------------------------------------------------------------------
     function get_message (self : MidiIn; deltatime : out Float)
-    	return String is
+    	return Message is
 
 		use Interfaces.C;
 		use Interfaces.C.Strings;
 
         function rtmidi_in_get_message
             (device  : RtMidiPtr;
-             message : chars_ptr;
+             message : out char_array;
              size    : out size_t) return double
         with Import        => True,
              Convention    => C,
              External_Name => "rtmidi_in_get_message";
 
 		buflen : size_t := 1024;
-        buffer : chars_ptr := New_String( (1 .. Integer(buflen) => ' ') );
+        buffer : char_array(0 .. buflen - 1);
         ret    : double := 0.0;
 
     begin
 		ret := rtmidi_in_get_message(self.device, buffer, buflen);
 
 		if ret <= 0.0 then
-			Free(buffer);
 			deltatime := 0.0;
-            return "";
+			declare
+				result : Message(1 .. 0);
+			begin
+            	return result;
+        	end;
         end if;
 
 		declare
 			-- buflen has been updated to the real length
-			result : String := To_Ada(Value(buffer, buflen), Trim_Nul => False);
+			result : Message(1 .. Positive(buflen));
 		begin
-			Free(buffer);
+			result := to_message(buffer, buflen);
 			deltatime := Float(ret);
 		    return result;
 	    end;
@@ -237,7 +247,7 @@ package body RtMidi.MidiIn is
     end get_message;
 
     ----------------------------------------------------------------------------
-    function get_message (self : MidiIn) return String is
+    function get_message (self : MidiIn) return Message is
     	deltatime : Float := 0.0;
     begin
     	return get_message(self, deltatime);
@@ -248,16 +258,14 @@ package body RtMidi.MidiIn is
 
     	use Ada.Text_IO;
 
-        message : String := get_message(self);
+        msg : String := to_string(get_message(self));
 
     begin
-        for i in message'Range loop
-            Put(Utils.to_hex(Character'Pos(message(i))) & " ");
-        end loop;
 
-        if message'First < message'Last  then
-        	New_Line;
+        if msg'First < msg'Last  then
+        	Put_Line(msg);
     	end if;
+
     end put_message;
 
 	----------------------------------------------------------------------------

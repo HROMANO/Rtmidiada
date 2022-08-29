@@ -42,7 +42,7 @@ package RtMidi.MidiIn is
 		type User_Data_Access is access all User_Data_Type;
 		type Callback_Type is access procedure
 		   (deltatime : Float;
-			message   : String;
+			msg       : Message;
 			user_data : access User_Data_Type);
 		procedure set_callback (self      : in out MidiIn;
 				                callback  : Callback_Type;
@@ -50,9 +50,9 @@ package RtMidi.MidiIn is
 	end Callback;
 
 	function get_message (self : MidiIn; deltatime : out Float)
-    	return String;
+    	return Message;
 
-    function get_message (self : MidiIn) return String;
+    function get_message (self : MidiIn) return Message;
 
     procedure put_message (self : MidiIn);
 

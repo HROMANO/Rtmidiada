@@ -7,6 +7,11 @@ with Interfaces.C.Strings;
 
 package Rtmidi is
 
+    type Byte is range 0 .. 255;
+    for Byte'Size use 8;
+
+    type Message is array (Positive range <>) of Byte;
+
     type RtMidiApi is
         (RTMIDI_API_UNSPECIFIED,
          RTMIDI_API_MACOSX_CORE,
@@ -48,6 +53,8 @@ package Rtmidi is
     --procedure error (error_type : RtMidiErrorType;
     --                 msg        : String);
 
+	function to_string(msg : Message) return String;
+
 private
     -- type RtMidiWrapper is record
     --     ptr  : System.Address;
@@ -77,5 +84,9 @@ private
     function get_port_name (device : RtMidiPtr;
                             number : Natural := 0)
 		return String;
+
+	function to_message (msg    : Interfaces.C.char_array;
+	                     length : Interfaces.C.size_t)
+		return Message;
 
 end Rtmidi;

@@ -18,27 +18,23 @@ procedure Rtmidi_Tests is
 	package cb_str is new RtMidi.MidiIn.CallBack(User_Data_Type => essai);
 
 	procedure cb0 (deltatime : Float;
-			       message   : String;
+			       msg       : RtMidi.Message;
 				   user_data : access Integer) is
     begin
 	  	user_data.all := user_data.all + 1;
     	Put("Deltatime = " & deltatime'Image & " - Message read = ");
-    	for i in message'Range loop
-            Put(Utils.to_hex(Character'Pos(message(i))) & " ");
-        end loop;
-        Put_Line("- User data = " & Integer'Image(user_data.all));
+        Put(RtMidi.to_string(msg));
+        Put_Line(" - User data = " & Integer'Image(user_data.all));
     end cb0;
 
   	procedure cb1 (deltatime : Float;
-			       message   : String;
+			       msg       : RtMidi.Message;
 				   user_data : access essai) is
     begin
 	  	user_data.all(1) := user_data.all(2);
     	Put("Delta = " & deltatime'Image & " - Message lu = ");
-    	for i in message'Range loop
-            Put(Utils.to_hex(Character'Pos(message(i))) & " ");
-        end loop;
-        Put_Line("User data = " & String(user_data.all));
+    	Put(RtMidi.to_string(msg));
+        Put_Line(" - User data = " & String(user_data.all));
     end cb1;
 
     u       : aliased Integer := 0;

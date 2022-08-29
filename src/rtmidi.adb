@@ -1,5 +1,6 @@
 with Interfaces.C;
 with Interfaces.C.Strings;
+with Utils;
 
 package body RtMidi is
 
@@ -232,5 +233,41 @@ package body RtMidi is
 		end;
 
 	end get_compiled_apis;                       
+
+	----------------------------------------------------------------------------
+	function to_string(msg : Message) return String is
+
+		use Utils;
+
+		-- Message ensures a 2 character only conversion for to_hex.
+		result : String(1 .. (msg'Length * 3 - 1));
+
+    begin
+        for i in msg'Range loop
+            result(i * 3 - 2 .. i * 3) := to_hex(Integer(msg(i))) & " ";
+        end loop;
+
+        return result;
+	end to_string;
+
+    ----------------------------------------------------------------------------
+	function to_message (msg    : Interfaces.C.char_array;
+	                     length : Interfaces.C.size_t)
+ 		return Message is
+
+		use Interfaces.C;
+
+		result : Message(1 .. Positive(length));
+
+	begin
+
+		for i in 1 .. Positive(length) loop
+			-- msg index starts at 0 and not 1, so 'i - 1'
+			result(i) := Byte(character'pos(To_Ada(msg(size_t(i - 1)))));
+		end loop;
+
+	    return result;
+
+	end to_message;
 
 end RtMidi;
