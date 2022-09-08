@@ -19,7 +19,7 @@ package RtMidi.MidiOut is
                         number : Natural)
         return String;
 
-	procedure create (self       : in out MidiOut);
+    procedure create (self       : in out MidiOut);
 
     procedure create (self       : in out MidiOut;
                       api        : RtMidiApi := RTMIDI_API_UNSPECIFIED;

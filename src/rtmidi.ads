@@ -53,7 +53,7 @@ package Rtmidi is
     --procedure error (error_type : RtMidiErrorType;
     --                 msg        : String);
 
-	function to_string(msg : Message) return String;
+    function to_string(msg : Message) return String;
 
 private
     -- type RtMidiWrapper is record
@@ -64,8 +64,8 @@ private
     -- end record
     -- with Convention => C;
 
-	type RtMidi is limited null record
-	with Convention => C;
+    type RtMidi is limited null record
+    with Convention => C;
 
     type RtMidiPtr is access all RtMidi;
 
@@ -83,10 +83,10 @@ private
 
     function get_port_name (device : RtMidiPtr;
                             number : Natural := 0)
-		return String;
+        return String;
 
-	function to_message (msg    : Interfaces.C.char_array;
-	                     length : Interfaces.C.size_t)
-		return Message;
+    function to_message (msg    : Interfaces.C.char_array;
+                         length : Interfaces.C.size_t)
+        return Message;
 
 end Rtmidi;

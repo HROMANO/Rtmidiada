@@ -19,7 +19,7 @@ package RtMidi.MidiIn is
                         number : Natural)
         return String;
 
-	procedure create (self           : in out MidiIn);
+    procedure create (self           : in out MidiIn);
 
     procedure create (self           : in out MidiIn;
                       api            : RtMidiApi := RTMIDI_API_UNSPECIFIED;
@@ -36,21 +36,21 @@ package RtMidi.MidiIn is
     procedure cancel_callback (self : in out MidiIn);
 
     generic
-		type User_Data_Type is private;
-	package Callback is
-		use Interfaces.C;
-		type User_Data_Access is access all User_Data_Type;
-		type Callback_Type is access procedure
-		   (deltatime : Float;
-			msg       : Message;
-			user_data : access User_Data_Type);
-		procedure set_callback (self      : in out MidiIn;
-				                callback  : Callback_Type;
-				                user_data : access User_Data_Type);
-	end Callback;
+        type User_Data_Type is private;
+    package Callback is
+        use Interfaces.C;
+        type User_Data_Access is access all User_Data_Type;
+        type Callback_Type is access procedure
+           (deltatime : Float;
+            msg       : Message;
+            user_data : access User_Data_Type);
+        procedure set_callback (self      : in out MidiIn;
+                                callback  : Callback_Type;
+                                user_data : access User_Data_Type);
+    end Callback;
 
-	function get_message (self : MidiIn; deltatime : out Float)
-    	return Message;
+    function get_message (self : MidiIn; deltatime : out Float)
+        return Message;
 
     function get_message (self : MidiIn) return Message;
 
@@ -64,7 +64,7 @@ private
 
     procedure free (self : in out MidiIn);
 
-	overriding
-	procedure Finalize (self : in out MidiIn);
+    overriding
+    procedure Finalize (self : in out MidiIn);
 
 end RtMidi.MidiIn;

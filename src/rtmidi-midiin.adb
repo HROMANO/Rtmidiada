@@ -43,21 +43,21 @@ package body RtMidi.MidiIn is
         return get_port_name(self.device, number);
     end port_name;
 
-	----------------------------------------------------------------------------
-	procedure create (self           : in out MidiIn) is
+    ----------------------------------------------------------------------------
+    procedure create (self           : in out MidiIn) is
 
-		function create_default
-		    return RtMidiPtr
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_in_create_default";
+        function create_default
+            return RtMidiPtr
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_in_create_default";
 
      begin
-     	if self.device /= null then
-     		self.free;
- 		end if;
+        if self.device /= null then
+            self.free;
+        end if;
 
-		self.device := create_default;
+        self.device := create_default;
 
      end create;
 
@@ -67,8 +67,8 @@ package body RtMidi.MidiIn is
                       clientName     : String := "RtMidi Input Client";
                       queueSizeLimit : Positive := 100) is
 
-		use Interfaces.C;
-		use Interfaces.C.Strings;
+        use Interfaces.C;
+        use Interfaces.C.Strings;
 
         function rtmidi_in_create
             (api            : RtMidiApi;
@@ -80,13 +80,13 @@ package body RtMidi.MidiIn is
             External_Name => "rtmidi_in_create";
 
     begin
-     	if self.device /= null then
-     		self.free;
- 		end if;
+        if self.device /= null then
+            self.free;
+        end if;
 
         self.device := rtmidi_in_create(api,
-						                New_String(clientName),
-						                unsigned(queueSizeLimit));
+                                        New_String(clientName),
+                                        unsigned(queueSizeLimit));
     end create;
 
     ----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ package body RtMidi.MidiIn is
                             midiTime  : boolean := True;
                             midiSense : boolean := True) is
 
-   		use Interfaces.C.Extensions;
+        use Interfaces.C.Extensions;
 
         procedure rtmidi_in_ignore_types (device    : RtMidiPtr;
                                           midiSysex : bool;
@@ -153,63 +153,63 @@ package body RtMidi.MidiIn is
 
     ----------------------------------------------------------------------------
     package body Callback is
-		procedure set_callback (self      : in out MidiIn;
-		                        callback  : Callback_Type;
-		                        user_data : access User_Data_Type) is
+        procedure set_callback (self      : in out MidiIn;
+                                callback  : Callback_Type;
+                                user_data : access User_Data_Type) is
 
-			use Interfaces.C;
-			use Interfaces.C.Strings;
+            use Interfaces.C;
+            use Interfaces.C.Strings;
 
-		    procedure rtmidi_in_set_callback
-		        (device   : RtMidiPtr;
-		         callback : System.Address;
-		         userData : System.Address)
-		    with Import => True,
-		         Convention => C,
-		         External_Name => "rtmidi_in_set_callback";
+            procedure rtmidi_in_set_callback
+                (device   : RtMidiPtr;
+                 callback : System.Address;
+                 userData : System.Address)
+            with Import => True,
+                 Convention => C,
+                 External_Name => "rtmidi_in_set_callback";
 
-	        type Proxy is access procedure (deltatime : double;
-							 				buffer    : char_array;
-							 				len       : size_t;
-										    user_data : access User_Data_Type)
-										    with Convention => C;
+            type Proxy is access procedure (deltatime : double;
+                                            buffer    : char_array;
+                                            len       : size_t;
+                                            user_data : access User_Data_Type)
+                                            with Convention => C;
 
             function Convert_User_Data is new Ada.Unchecked_Conversion
-     			(User_Data_Access, System.Address);
+                (User_Data_Access, System.Address);
 
-   			function Convert_Callback is new Ada.Unchecked_Conversion
-     			(Proxy, System.Address);
+            function Convert_Callback is new Ada.Unchecked_Conversion
+                (Proxy, System.Address);
 
- 			procedure cb (deltatime : double;
-         				  buffer    : char_array;
-         				  len       : size_t;
+            procedure cb (deltatime : double;
+                          buffer    : char_array;
+                          len       : size_t;
                           user_data : access User_Data_Type)
             with Convention => C;
 
             procedure cb (deltatime : double;
-         				  buffer    : char_array;
-         				  len       : size_t;
+                          buffer    : char_array;
+                          len       : size_t;
                           user_data : access User_Data_Type) is
- 			begin
- 				callback(Float(deltatime),
- 				         to_message(buffer, len),
- 				         user_data);
- 			end cb;
+            begin
+                callback(Float(deltatime),
+                         to_message(buffer, len),
+                         user_data);
+            end cb;
 
-		begin
-		    rtmidi_in_set_callback(
-		    	device => self.device,
-		    	callback => Convert_Callback(cb'access),
-		    	userData => Convert_User_Data(User_Data_Access(user_data)));
-		end set_callback;
+        begin
+            rtmidi_in_set_callback(
+                device => self.device,
+                callback => Convert_Callback(cb'access),
+                userData => Convert_User_Data(User_Data_Access(user_data)));
+        end set_callback;
     end Callback;
 
     ----------------------------------------------------------------------------
     function get_message (self : MidiIn; deltatime : out Float)
-    	return Message is
+        return Message is
 
-		use Interfaces.C;
-		use Interfaces.C.Strings;
+        use Interfaces.C;
+        use Interfaces.C.Strings;
 
         function rtmidi_in_get_message
             (device  : RtMidiPtr;
@@ -219,61 +219,61 @@ package body RtMidi.MidiIn is
              Convention    => C,
              External_Name => "rtmidi_in_get_message";
 
-		buflen : size_t := 1024;
+        buflen : size_t := 1024;
         buffer : char_array(0 .. buflen - 1);
         ret    : double := 0.0;
 
     begin
-		ret := rtmidi_in_get_message(self.device, buffer, buflen);
+        ret := rtmidi_in_get_message(self.device, buffer, buflen);
 
-		if ret <= 0.0 then
-			deltatime := 0.0;
-			declare
-				result : Message(1 .. 0);
-			begin
-            	return result;
-        	end;
+        if ret <= 0.0 then
+            deltatime := 0.0;
+            declare
+                result : Message(1 .. 0);
+            begin
+                return result;
+            end;
         end if;
 
-		declare
-			-- buflen has been updated to the real length
-			result : Message(1 .. Positive(buflen));
-		begin
-			result := to_message(buffer, buflen);
-			deltatime := Float(ret);
-		    return result;
-	    end;
+        declare
+            -- buflen has been updated to the real length
+            result : Message(1 .. Positive(buflen));
+        begin
+            result := to_message(buffer, buflen);
+            deltatime := Float(ret);
+            return result;
+        end;
 
     end get_message;
 
     ----------------------------------------------------------------------------
     function get_message (self : MidiIn) return Message is
-    	deltatime : Float := 0.0;
+        deltatime : Float := 0.0;
     begin
-    	return get_message(self, deltatime);
-	end get_message;
+        return get_message(self, deltatime);
+    end get_message;
 
     ----------------------------------------------------------------------------
     procedure put_message (self : MidiIn) is
 
-    	use Ada.Text_IO;
+        use Ada.Text_IO;
 
         msg : String := to_string(get_message(self));
 
     begin
 
         if msg'First < msg'Last  then
-        	Put_Line(msg);
-    	end if;
+            Put_Line(msg);
+        end if;
 
     end put_message;
 
-	----------------------------------------------------------------------------
-	overriding
-	procedure Finalize (self : in out MidiIn) is
-	begin
-		self.free;
-	end Finalize;
+    ----------------------------------------------------------------------------
+    overriding
+    procedure Finalize (self : in out MidiIn) is
+    begin
+        self.free;
+    end Finalize;
 
 end RtMidi.MidiIn;
 

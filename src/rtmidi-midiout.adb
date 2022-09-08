@@ -1,3 +1,5 @@
+ with Interfaces.C;
+
  package body RtMidi.MidiOut is
 
     ----------------------------------------------------------------------------
@@ -36,21 +38,21 @@
         return get_port_name(self.device, number);
     end port_name;
 
-	----------------------------------------------------------------------------
-	procedure create (self       : in out MidiOut) is
+    ----------------------------------------------------------------------------
+    procedure create (self       : in out MidiOut) is
 
-		function create_default
-		    return RtMidiPtr
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_out_create_default";
+        function create_default
+            return RtMidiPtr
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_out_create_default";
 
      begin
-     	if self.device /= null then
-     		self.free;
- 		end if;
+        if self.device /= null then
+            self.free;
+        end if;
 
-		self.device := create_default;
+        self.device := create_default;
 
      end create;
 
@@ -61,17 +63,17 @@
 
         use Interfaces.C.Strings;
 
-		function rtmidi_out_create (api        : RtMidiApi;
-		                            clientName : chars_ptr)
-			return RtMidiPtr
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_out_create";
+        function rtmidi_out_create (api        : RtMidiApi;
+                                    clientName : chars_ptr)
+            return RtMidiPtr
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_out_create";
 
     begin
-    	if self.device /= null then
-     		self.free;
- 		end if;
+        if self.device /= null then
+            self.free;
+        end if;
 
         self.device := rtmidi_out_create(api, New_String(clientName));
 
@@ -80,10 +82,10 @@
     ----------------------------------------------------------------------------
     procedure free (self : in out MidiOut) is
 
-	    procedure rtmidi_out_free (device : RtMidiPtr)
-		with Import        => True,
-			 Convention    => C,
-			 External_Name => "rtmidi_out_free";
+        procedure rtmidi_out_free (device : RtMidiPtr)
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_out_free";
 
     begin
         rtmidi_out_free(self.device);
@@ -94,11 +96,11 @@
     function get_current_api (self : MidiOut)
         return RtMidiApi is
 
-		function rtmidi_out_get_current_api (device : RtMidiPtr)
-		    return RtMidiApi
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_out_get_current_api";
+        function rtmidi_out_get_current_api (device : RtMidiPtr)
+            return RtMidiApi
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_out_get_current_api";
 
     begin
         return rtmidi_out_get_current_api(self.device);
@@ -109,15 +111,15 @@
                            message : String)
         return Integer is
 
-		use Interfaces.C;
+        use Interfaces.C;
 
         function rtmidi_out_send_message (device  : RtMidiPtr;
-                                  		  message : char_array;
-                                  		  length  : int)
-		return int
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_out_send_message";
+                                          message : char_array;
+                                          length  : int)
+        return int
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_out_send_message";
 
     begin
         return Integer(rtmidi_out_send_message(self.device,

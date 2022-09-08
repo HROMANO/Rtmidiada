@@ -7,9 +7,9 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function api_name (api : RtMidiApi) return String is
     
-    	use Interfaces.C.Strings;
-    	
-        function rtmidi_api_name (api : RtMidiApi) 
+        use Interfaces.C.Strings;
+
+        function rtmidi_api_name (api : RtMidiApi)
             return chars_ptr
         with Import        => True,
              Convention    => C,
@@ -23,9 +23,9 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function api_display_name (api : RtMidiApi) return String is
     
-    	use Interfaces.C.Strings;
-    	
-        function rtmidi_api_display_name (api : RtMidiApi) 
+        use Interfaces.C.Strings;
+
+        function rtmidi_api_display_name (api : RtMidiApi)
             return chars_ptr
         with Import       => True,
             Convention    => C,
@@ -39,9 +39,9 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function compiled_api_by_name(name : String) return RtMidiApi is
     
-    	use Interfaces.C.Strings;
-    	
-        function rtmidi_compiled_api_by_name (name : chars_ptr) 
+        use Interfaces.C.Strings;
+
+        function rtmidi_compiled_api_by_name (name : chars_ptr)
             return RtMidiApi
         with Import       => True,
             Convention    => C,
@@ -73,9 +73,9 @@ package body RtMidi is
                          number : Natural; 
                          name   : String) is
 
-		use Interfaces.C;
-		use Interfaces.C.Strings;
-		                         
+        use Interfaces.C;
+        use Interfaces.C.Strings;
+
         procedure rtmidi_open_port
             (device    : RtMidiPtr;
             portNumber : unsigned; -- if 0, the first available.
@@ -93,9 +93,9 @@ package body RtMidi is
     procedure open_virtual_port (device : in out RtMidiPtr; 
                                  name   : String) is
     
-    	use Interfaces.C.Strings;
-    	
-        procedure rtmidi_open_virtual_port 
+        use Interfaces.C.Strings;
+
+        procedure rtmidi_open_virtual_port
             (device   : RtMidiPtr; 
              portName : chars_ptr)
         with Import       => True,
@@ -122,9 +122,9 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function port_count (device : RtMidiPtr) return Natural is
     
-    	use Interfaces.C;
-    	
-        function rtmidi_get_port_count (device : RtMidiPtr) 
+        use Interfaces.C;
+
+        function rtmidi_get_port_count (device : RtMidiPtr)
             return unsigned
         with Import       => True,
             Convention    => C,
@@ -137,11 +137,11 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function get_port_name (device : RtMidiPtr;
                             number : Natural := 0)
-		return String is
+        return String is
 
-		use Interfaces.C;
-		use Interfaces.C.Strings;
-		
+        use Interfaces.C;
+        use Interfaces.C.Strings;
+
         function rtmidi_get_port_name
             (device     : RtMidiPtr;
              portNumber : unsigned;
@@ -182,65 +182,65 @@ package body RtMidi is
     ----------------------------------------------------------------------------
     function get_compiled_apis return RtMidiApi_Array is
     
-    	-- TODO: quite ugly.
-    	
-    	use Interfaces.C;
-    	use Interfaces.C.Strings;
-		 
-		function rtmidi_get_compiled_api (apis      : in out RtMidiApi_Array; 
-		                                  apis_size : unsigned) 
-			return int
-		with Import        => True,
-		     Convention    => C,
-		     External_Name => "rtmidi_get_compiled_api";
-		 
-		 function get_num_compiled_api (apis      : chars_ptr; 
-		                                apis_size : unsigned) 
-			return int
-		with Import        => True,
-			 Convention    => C,
-			 External_Name => "rtmidi_get_compiled_api";
-		         
-	     size : unsigned := 0;
-	     ret  : int := 0;
-	     
+        -- TODO: quite ugly.
+
+        use Interfaces.C;
+        use Interfaces.C.Strings;
+
+        function rtmidi_get_compiled_api (apis      : in out RtMidiApi_Array;
+                                          apis_size : unsigned)
+            return int
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_get_compiled_api";
+
+         function get_num_compiled_api (apis      : chars_ptr;
+                                        apis_size : unsigned)
+            return int
+        with Import        => True,
+             Convention    => C,
+             External_Name => "rtmidi_get_compiled_api";
+
+         size : unsigned := 0;
+         ret  : int := 0;
+
     begin
-    	ret := get_num_compiled_api(Null_Ptr, 0);
-    	
-    	if ret <= 0 then
-    		declare
-    			result : RtMidiApi_Array (1 .. 0);
-			begin
-    			return result;
-			end;
-		else
-			size := unsigned(ret);
-		end if;
-		
-		declare
-			result : RtMidiApi_Array (1 .. Integer(size));
-		begin
-			ret := rtmidi_get_compiled_api(result, size);
-			if ret <= 0 then
-				declare
-					result : RtMidiApi_Array (1 .. 0);
-				begin
-					return result;
-				end;
-			else
-				return result;
-			end if;
-		end;
+        ret := get_num_compiled_api(Null_Ptr, 0);
 
-	end get_compiled_apis;                       
+        if ret <= 0 then
+            declare
+                result : RtMidiApi_Array (1 .. 0);
+            begin
+                return result;
+            end;
+        else
+            size := unsigned(ret);
+        end if;
 
-	----------------------------------------------------------------------------
-	function to_string(msg : Message) return String is
+        declare
+            result : RtMidiApi_Array (1 .. Integer(size));
+        begin
+            ret := rtmidi_get_compiled_api(result, size);
+            if ret <= 0 then
+                declare
+                    result : RtMidiApi_Array (1 .. 0);
+                begin
+                    return result;
+                end;
+            else
+                return result;
+            end if;
+        end;
 
-		use Utils;
+    end get_compiled_apis;
 
-		-- Message ensures a 2 character only conversion for to_hex.
-		result : String(1 .. (msg'Length * 3 - 1));
+    ----------------------------------------------------------------------------
+    function to_string(msg : Message) return String is
+
+        use Utils;
+
+        -- Message ensures a 2 character only conversion for to_hex.
+        result : String(1 .. (msg'Length * 3 - 1));
 
     begin
         for i in msg'Range loop
@@ -248,26 +248,26 @@ package body RtMidi is
         end loop;
 
         return result;
-	end to_string;
+    end to_string;
 
     ----------------------------------------------------------------------------
-	function to_message (msg    : Interfaces.C.char_array;
-	                     length : Interfaces.C.size_t)
- 		return Message is
+    function to_message (msg    : Interfaces.C.char_array;
+                         length : Interfaces.C.size_t)
+        return Message is
 
-		use Interfaces.C;
+        use Interfaces.C;
 
-		result : Message(1 .. Positive(length));
+        result : Message(1 .. Positive(length));
 
-	begin
+    begin
 
-		for i in 1 .. Positive(length) loop
-			-- msg index starts at 0 and not 1, so 'i - 1'
-			result(i) := Byte(character'pos(To_Ada(msg(size_t(i - 1)))));
-		end loop;
+        for i in 1 .. Positive(length) loop
+            -- msg index starts at 0 and not 1, so 'i - 1'
+            result(i) := Byte(character'pos(To_Ada(msg(size_t(i - 1)))));
+        end loop;
 
-	    return result;
+        return result;
 
-	end to_message;
+    end to_message;
 
 end RtMidi;

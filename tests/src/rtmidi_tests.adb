@@ -12,35 +12,35 @@ procedure Rtmidi_Tests is
     midi_out : Array(apis'Range) of RtMidi.MidiOut.MidiOut;
     nb_ports : Array(apis'Range) of Natural := (others => 0);
 
-	type essai is new String(1 .. 10);
+    type essai is new String(1 .. 10);
 
-	package cb_int is new RtMidi.MidiIn.CallBack(User_Data_Type => Integer);
-	package cb_str is new RtMidi.MidiIn.CallBack(User_Data_Type => essai);
+    package cb_int is new RtMidi.MidiIn.CallBack(User_Data_Type => Integer);
+    package cb_str is new RtMidi.MidiIn.CallBack(User_Data_Type => essai);
 
-	procedure cb0 (deltatime : Float;
-			       msg       : RtMidi.Message;
-				   user_data : access Integer) is
+    procedure cb0 (deltatime : Float;
+                   msg       : RtMidi.Message;
+                   user_data : access Integer) is
     begin
-	  	user_data.all := user_data.all + 1;
-    	Put("Deltatime = " & deltatime'Image & " - Message read = ");
+        user_data.all := user_data.all + 1;
+        Put("Deltatime = " & deltatime'Image & " - Message read = ");
         Put(RtMidi.to_string(msg));
         Put_Line(" - User data = " & Integer'Image(user_data.all));
     end cb0;
 
-  	procedure cb1 (deltatime : Float;
-			       msg       : RtMidi.Message;
-				   user_data : access essai) is
+    procedure cb1 (deltatime : Float;
+                   msg       : RtMidi.Message;
+                   user_data : access essai) is
     begin
-	  	user_data.all(1) := user_data.all(2);
-    	Put("Delta = " & deltatime'Image & " - Message lu = ");
-    	Put(RtMidi.to_string(msg));
+        user_data.all(1) := user_data.all(2);
+        Put("Delta = " & deltatime'Image & " - Message lu = ");
+        Put(RtMidi.to_string(msg));
         Put_Line(" - User data = " & String(user_data.all));
     end cb1;
 
     u       : aliased Integer := 0;
     v       : aliased essai := "abc       ";
- 	message : String := "00";
- 	ret     : integer := 0;
+    message : String := "00";
+    ret     : integer := 0;
 
 begin
 
