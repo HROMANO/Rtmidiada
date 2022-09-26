@@ -15,7 +15,7 @@ package body RtMidi is
              Convention    => C,
              External_Name => "rtmidi_api_name";
              
-        name : String := Value(rtmidi_api_name(api));
+        name : constant String := Value(rtmidi_api_name(api));
     begin
         return name;
     end api_name;
@@ -31,7 +31,7 @@ package body RtMidi is
             Convention    => C,
             External_Name => "rtmidi_api_display_name";
             
-        name : String := Value(rtmidi_api_display_name (api));
+        name : constant String := Value(rtmidi_api_display_name (api));
     begin
         return name;
     end api_display_name;
@@ -47,7 +47,7 @@ package body RtMidi is
             Convention    => C,
             External_Name => "rtmidi_compiled_api_by_name";
     
-        api : RtMidiAPi 
+        api : constant RtMidiAPi
             := rtmidi_compiled_api_by_name (New_String(name));
     begin
         return api;
@@ -235,7 +235,7 @@ package body RtMidi is
     end get_compiled_apis;
 
     ----------------------------------------------------------------------------
-    function to_string(msg : Message) return String is
+    function to_string (msg : Message) return String is
 
         use Utils;
 

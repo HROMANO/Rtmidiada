@@ -258,7 +258,7 @@ package body RtMidi.MidiIn is
 
         use Ada.Text_IO;
 
-        msg : String := to_string(get_message(self));
+        msg : constant String := to_string(get_message(self));
 
     begin
 

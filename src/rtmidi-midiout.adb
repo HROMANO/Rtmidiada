@@ -39,7 +39,7 @@
     end port_name;
 
     ----------------------------------------------------------------------------
-    procedure create (self       : in out MidiOut) is
+    procedure create (self : in out MidiOut) is
 
         function create_default
             return RtMidiPtr

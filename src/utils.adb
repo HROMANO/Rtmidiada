@@ -9,7 +9,7 @@ package body Utils is
         temp1 : Natural;
         temp2 : Natural;
 
-        hexa : String := "0123456789ABCDEF";
+        hexa : constant String := "0123456789ABCDEF";
         result : Unbounded_String := Null_Unbounded_String;
     begin
 
