@@ -222,27 +222,19 @@ package body RtMidi.MidiIn is
         buflen : size_t := 1024;
         buffer : char_array(0 .. buflen - 1);
         ret    : double := 0.0;
+        empty  : Message(1 .. 0);
 
     begin
         ret := rtmidi_in_get_message(self.device, buffer, buflen);
 
         if ret <= 0.0 then
             deltatime := 0.0;
-            declare
-                result : Message(1 .. 0);
-            begin
-                return result;
-            end;
-        end if;
-
-        declare
-            -- buflen has been updated to the real length
-            result : Message(1 .. Positive(buflen));
-        begin
-            result := to_message(buffer, buflen);
+            return empty;
+        else
             deltatime := Float(ret);
-            return result;
-        end;
+            -- buflen has been updated to the real length
+            return to_message(buffer, buflen);
+        end if;
 
     end get_message;
 
