@@ -54,21 +54,6 @@ package body RtMidi is
     end compiled_api_by_name;
     
     ----------------------------------------------------------------------------
-    --procedure error (error_type : RtMidiErrorType; 
-    --                 msg : String) is
-        
-            --procedure rtmidi_error (c_type      : RtMidiErrorType; 
-            --                        errorString : Strings.chars_ptr)
-            --with Import       => True,
-            --    Convention    => C,
-            --    External_Name => "rtmidi_error";
-    
-    --begin
-    --    rtmidi_error(error_type, 
-    --                 Strings.New_String(msg));
-    --end error;
-    
-    ----------------------------------------------------------------------------
     procedure open_port (device : in out RtMidiPtr; 
                          number : Natural; 
                          name   : String) is

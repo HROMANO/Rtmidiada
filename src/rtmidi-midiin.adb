@@ -151,7 +151,7 @@ package body RtMidi.MidiIn is
     end cancel_callback;
 
     ----------------------------------------------------------------------------
-    package body Callback is
+    package body Callback_Factory is
         procedure set_callback (self      : in out MidiIn;
                                 callback  : Callback_Type;
                                 user_data : access User_Data_Type) is
@@ -159,49 +159,46 @@ package body RtMidi.MidiIn is
             use Interfaces.C;
             use Interfaces.C.Strings;
 
-            procedure rtmidi_in_set_callback
-                (device   : RtMidiPtr;
-                 callback : System.Address;
-                 userData : System.Address)
-            with Import => True,
-                 Convention => C,
-                 External_Name => "rtmidi_in_set_callback";
-
             type Proxy is access procedure (deltatime : double;
                                             buffer    : char_array;
                                             len       : size_t;
                                             user_data : access User_Data_Type)
                                             with Convention => C;
 
+            procedure rtmidi_in_set_callback
+                (device   : RtMidiPtr;
+                 callback : Proxy;
+                 userData : System.Address)
+            with Import => True,
+                 Convention => C,
+                 External_Name => "rtmidi_in_set_callback";
+
             function Convert_User_Data is new Ada.Unchecked_Conversion
                 (User_Data_Access, System.Address);
 
-            function Convert_Callback is new Ada.Unchecked_Conversion
-                (Proxy, System.Address);
-
-            procedure cb (deltatime : double;
-                          buffer    : char_array;
-                          len       : size_t;
-                          user_data : access User_Data_Type)
+            procedure wrapper (deltatime : double;
+                               buffer    : char_array;
+                               len       : size_t;
+                               user_data : access User_Data_Type)
             with Convention => C;
 
-            procedure cb (deltatime : double;
-                          buffer    : char_array;
-                          len       : size_t;
-                          user_data : access User_Data_Type) is
+            procedure wrapper (deltatime : double;
+                               buffer    : char_array;
+                               len       : size_t;
+                               user_data : access User_Data_Type) is
             begin
                 callback(Float(deltatime),
                          to_message(buffer, len),
                          user_data);
-            end cb;
+            end wrapper;
 
         begin
             rtmidi_in_set_callback(
                 device => self.device,
-                callback => Convert_Callback(cb'access),
+                callback => wrapper'access,
                 userData => Convert_User_Data(User_Data_Access(user_data)));
         end set_callback;
-    end Callback;
+    end Callback_Factory;
 
     ----------------------------------------------------------------------------
     function get_message (self : MidiIn; deltatime : out Float)

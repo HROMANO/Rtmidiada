@@ -37,7 +37,7 @@ package RtMidi.MidiIn is
 
     generic
         type User_Data_Type is private;
-    package Callback is
+    package Callback_Factory is
         use Interfaces.C;
         type User_Data_Access is access all User_Data_Type;
         type Callback_Type is access procedure
@@ -47,7 +47,7 @@ package RtMidi.MidiIn is
         procedure set_callback (self      : in out MidiIn;
                                 callback  : Callback_Type;
                                 user_data : access User_Data_Type);
-    end Callback;
+    end Callback_Factory;
 
     function get_message (self : MidiIn; deltatime : out Float)
         return Message;

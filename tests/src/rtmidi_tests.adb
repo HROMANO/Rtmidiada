@@ -13,8 +13,8 @@ procedure Rtmidi_Tests is
 
     type essai is new String(1 .. 10);
 
-    package cb_int is new RtMidi.MidiIn.CallBack(User_Data_Type => Integer);
-    package cb_str is new RtMidi.MidiIn.CallBack(User_Data_Type => essai);
+    package cb_int is new RtMidi.MidiIn.CallBack_Factory(User_Data_Type => Integer);
+    package cb_str is new RtMidi.MidiIn.CallBack_Factory(User_Data_Type => essai);
 
     procedure cb0 (deltatime : Float;
                    msg       : RtMidi.Message;
@@ -81,16 +81,23 @@ begin
     midi_in(1).open_port(1, "First");
     midi_in(1).ignore_types(False, False, False);
     Put_Line("Waiting for messages…");
+    Put_Line("User data is Integer");
     cb_int.set_callback(midi_in(1), cb0'Access, u'Access);
-    -- cb_str.set_callback(midi_in(1), cb1'Access, v'Access);
+    delay 5.0;
 
+    midi_in(1).cancel_callback;
+    Put_Line("User data is String(1..10)");
+    cb_str.set_callback(midi_in(1), cb1'Access, v'Access);
+    delay 5.0;
+
+    Put_Line("Some MIDI Out");
     RtMidi.MidiOut.create(midi_out(1), RtMidi.RTMIDI_API_LINUX_ALSA);
     midi_out(1).open_port(1, "First");
     message(1) := Character'Val(16#C0#);
     message(2) := Character'Val(16#11#);
     ret := midi_out(1).send_message(message);
+    delay 1.0;
 
-    delay 10.0;
     midi_in(1).cancel_callback;
     Put_Line("Switching to non callback.");
     loop
