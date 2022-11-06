@@ -2,7 +2,6 @@ with Interfaces.C.Strings;
 with Interfaces.C.Extensions;
 with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
-with Utils;
 with System.Address_Image;
 
 package body RtMidi.MidiIn is

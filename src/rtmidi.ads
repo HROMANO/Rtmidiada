@@ -89,4 +89,8 @@ private
                          length : Interfaces.C.size_t)
         return Message;
 
+    function to_hex (value : Natural;
+                     pad   : Boolean := True)
+        return String;
+
 end Rtmidi;

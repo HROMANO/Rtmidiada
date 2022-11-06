@@ -3,7 +3,6 @@ with Ada.Text_IO; use Ada.Text_IO;
 with RtMidi;
 with RtMidi.MidiIn;
 with RtMidi.MidiOut;
-with Utils;
 
 procedure Rtmidi_Tests is
 
