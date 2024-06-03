@@ -1,8 +1,10 @@
-with Interfaces.C.Strings;
-with Interfaces.C.Extensions;
 with Ada.Text_IO;
 with Ada.Unchecked_Conversion;
-with System.Address_Image;
+
+with Interfaces.C.Strings;
+with Interfaces.C.Extensions;
+
+with System;
 
 package body Rtmidi.MidiIn is
 
@@ -142,9 +144,6 @@ package body Rtmidi.MidiIn is
          user_data :        access User_Data_Type)
       is
 
-         use Interfaces.C;
-         use Interfaces.C.Strings;
-
          type Proxy is
            access procedure
              (deltatime : double; buffer : char_array; len : size_t;
@@ -185,7 +184,6 @@ package body Rtmidi.MidiIn is
    is
 
       use Interfaces.C;
-      use Interfaces.C.Strings;
 
       function rtmidi_in_get_message
         (device : RtMidiPtr; message : out char_array; size : out size_t)
@@ -206,7 +204,7 @@ package body Rtmidi.MidiIn is
          return empty;
       else
          deltatime := Float (ret);
-         -- buflen has been updated to the real length
+         --  buflen has been updated to the real length
          return to_message (buffer, buflen);
       end if;
 

@@ -1,9 +1,6 @@
 pragma Ada_2012;
 
 with Interfaces.C;
-with System;
-with Interfaces.C.Extensions;
-with Interfaces.C.Strings;
 
 package Rtmidi is
 
@@ -38,19 +35,19 @@ package Rtmidi is
 
    function get_compiled_apis return RtMidiApi_Array;
 
-   --procedure error (error_type : RtMidiErrorType;
-   --                 msg        : String);
+   --  procedure error (error_type : RtMidiErrorType;
+   --                   msg        : String);
 
    function to_string (msg : Message) return String;
 
 private
-   -- type RtMidiWrapper is record
-   --     ptr  : System.Address;
-   --     data : System.Address;
-   --     ok   : Boolean;
-   --     msg  : Interfaces.C.Strings.chars_ptr;
-   -- end record
-   -- with Convention => C;
+   --  type RtMidiWrapper is record
+   --      ptr  : System.Address;
+   --      data : System.Address;
+   --      ok   : Boolean;
+   --      msg  : Interfaces.C.Strings.chars_ptr;
+   --  end record
+   --  with Convention => C;
 
    type RtMidi is limited null record with
      Convention => C;

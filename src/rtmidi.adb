@@ -1,8 +1,7 @@
-with Interfaces.C;
 with Interfaces.C.Strings;
 with Ada.Strings.Unbounded;
 
-package body RtMidi is
+package body Rtmidi is
 
    ----------------------------------------------------------------------------
    function api_name (api : RtMidiApi) return String is
@@ -56,7 +55,7 @@ package body RtMidi is
       use Interfaces.C.Strings;
 
       procedure rtmidi_open_port
-        (device     : RtMidiPtr;
+        (device     : in out RtMidiPtr;
          portNumber : unsigned; -- if 0, the first available.
          portName   : chars_ptr) with
         Import => True, Convention => C, External_Name => "rtmidi_open_port";
@@ -71,7 +70,7 @@ package body RtMidi is
       use Interfaces.C.Strings;
 
       procedure rtmidi_open_virtual_port
-        (device : RtMidiPtr; portName : chars_ptr) with
+        (device : in out RtMidiPtr; portName : chars_ptr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
@@ -82,7 +81,7 @@ package body RtMidi is
    ----------------------------------------------------------------------------
    procedure close_port (device : in out RtMidiPtr) is
 
-      procedure rtmidi_close_port (device : RtMidiPtr) with
+      procedure rtmidi_close_port (device : in out RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_close_port";
 
    begin
@@ -141,7 +140,7 @@ package body RtMidi is
    ----------------------------------------------------------------------------
    function get_compiled_apis return RtMidiApi_Array is
 
-      -- TODO: quite ugly.
+      --  TODO: quite ugly.
 
       use Interfaces.C;
       use Interfaces.C.Strings;
@@ -192,7 +191,7 @@ package body RtMidi is
    ----------------------------------------------------------------------------
    function to_string (msg : Message) return String is
 
-      -- Message ensures a 2 character only conversion for to_hex.
+      --  Message ensures a 2 character only conversion for to_hex.
       result : String (1 .. (msg'Length * 3 - 1));
 
    begin
@@ -216,7 +215,7 @@ package body RtMidi is
    begin
 
       for i in 1 .. Positive (length) loop
-         -- msg index starts at 0 and not 1, so 'i - 1'
+         --  msg index starts at 0 and not 1, so 'i - 1'
          result (i) := Byte (Character'Pos (To_Ada (msg (size_t (i - 1)))));
       end loop;
 
@@ -237,7 +236,7 @@ package body RtMidi is
    begin
 
       if value = 0 then
-         if pad = True then
+         if pad then
             return "00";
          else
             return "0";
@@ -251,11 +250,11 @@ package body RtMidi is
          temp2  := temp2 / 16;
       end loop;
 
-      if pad = True and (Length (result) mod 2) /= 0 then
+      if pad and then (Length (result) mod 2) /= 0 then
          result := "0" & result;
       end if;
 
       return To_String (result);
    end to_hex;
 
-end RtMidi;
+end Rtmidi;
