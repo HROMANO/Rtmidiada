@@ -54,9 +54,9 @@ package body Rtmidi is
       use Interfaces.C.Strings;
 
       procedure Internal
-        (device     : in out RtMidiPtr;
-         portNumber :        unsigned; -- if 0, the first available.
-         portName   :        chars_ptr) with
+        (device     : RtMidiPtr;
+         portNumber : unsigned; -- if 0, the first available.
+         portName   : chars_ptr) with
         Import => True, Convention => C, External_Name => "rtmidi_open_port";
 
    begin
@@ -79,7 +79,7 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    procedure close_port (device : in out RtMidiPtr) is
 
-      procedure Internal (device : in out RtMidiPtr) with
+      procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_close_port";
 
    begin
