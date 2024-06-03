@@ -41,7 +41,7 @@ package body Rtmidi.MidiOut is
    ----------------------------------------------------------------------------
    procedure create (self : in out MidiOut) is
 
-      function create_default return RtMidiPtr with
+      function Internal return RtMidiPtr with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_create_default";
 
@@ -50,7 +50,7 @@ package body Rtmidi.MidiOut is
          self.free;
       end if;
 
-      self.device := create_default;
+      self.device := Internal;
 
    end create;
 
@@ -62,7 +62,7 @@ package body Rtmidi.MidiOut is
 
       use Interfaces.C.Strings;
 
-      function rtmidi_out_create
+      function Internal
         (api : RtMidiApi; clientName : chars_ptr) return RtMidiPtr with
         Import => True, Convention => C, External_Name => "rtmidi_out_create";
 
@@ -71,31 +71,30 @@ package body Rtmidi.MidiOut is
          self.free;
       end if;
 
-      self.device := rtmidi_out_create (api, New_String (clientName));
+      self.device := Internal (api, New_String (clientName));
 
    end create;
 
    ----------------------------------------------------------------------------
    procedure free (self : in out MidiOut) is
 
-      procedure rtmidi_out_free (device : RtMidiPtr) with
+      procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_out_free";
 
    begin
-      rtmidi_out_free (self.device);
+      Internal (self.device);
       self.device := null;
    end free;
 
    ----------------------------------------------------------------------------
    function get_current_api (self : MidiOut) return RtMidiApi is
 
-      function rtmidi_out_get_current_api
-        (device : RtMidiPtr) return RtMidiApi with
+      function Internal (device : RtMidiPtr) return RtMidiApi with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_get_current_api";
 
    begin
-      return rtmidi_out_get_current_api (self.device);
+      return Internal (self.device);
    end get_current_api;
 
    ----------------------------------------------------------------------------
@@ -105,7 +104,7 @@ package body Rtmidi.MidiOut is
 
       use Interfaces.C;
 
-      function rtmidi_out_send_message
+      function Internal
         (device : RtMidiPtr; message : char_array; length : int)
          return int with
         Import        => True, Convention => C,
@@ -114,8 +113,7 @@ package body Rtmidi.MidiOut is
    begin
       return
         Integer
-          (rtmidi_out_send_message
-             (self.device, To_C (message, False), message'Length));
+          (Internal (self.device, To_C (message, False), message'Length));
    end send_message;
 
    ----------------------------------------------------------------------------
