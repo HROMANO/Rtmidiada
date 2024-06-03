@@ -46,7 +46,7 @@ package body Rtmidi.MidiIn is
    ----------------------------------------------------------------------------
    procedure create (self : in out MidiIn) is
 
-      function create_default return RtMidiPtr with
+      function Internal return RtMidiPtr with
         Import        => True, Convention => C,
         External_Name => "rtmidi_in_create_default";
 
@@ -55,7 +55,7 @@ package body Rtmidi.MidiIn is
          self.free;
       end if;
 
-      self.device := create_default;
+      self.device := Internal;
 
    end create;
 
@@ -69,7 +69,7 @@ package body Rtmidi.MidiIn is
       use Interfaces.C;
       use Interfaces.C.Strings;
 
-      function rtmidi_in_create
+      function Internal
         (api : RtMidiApi; clientName : chars_ptr; queueSizeLimit : unsigned)
          return RtMidiPtr with
         Import => True, Convention => C, External_Name => "rtmidi_in_create";
@@ -80,31 +80,29 @@ package body Rtmidi.MidiIn is
       end if;
 
       self.device :=
-        rtmidi_in_create
-          (api, New_String (clientName), unsigned (queueSizeLimit));
+        Internal (api, New_String (clientName), unsigned (queueSizeLimit));
    end create;
 
    ----------------------------------------------------------------------------
    procedure free (self : in out MidiIn) is
 
-      procedure rtmidi_in_free (device : RtMidiPtr) with
+      procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_in_free";
 
    begin
-      rtmidi_in_free (self.device);
+      Internal (self.device);
       self.device := null;
    end free;
 
    ----------------------------------------------------------------------------
    function get_current_api (self : MidiIn) return RtMidiApi is
 
-      function rtmidi_in_get_current_api
-        (device : RtMidiPtr) return RtMidiApi with
+      function Internal (device : RtMidiPtr) return RtMidiApi with
         Import        => True, Convention => C,
         External_Name => "rtmidi_in_get_current_api";
 
    begin
-      return rtmidi_in_get_current_api (self.device);
+      return Internal (self.device);
    end get_current_api;
 
    ----------------------------------------------------------------------------
@@ -115,26 +113,26 @@ package body Rtmidi.MidiIn is
 
       use Interfaces.C.Extensions;
 
-      procedure rtmidi_in_ignore_types
+      procedure Internal
         (device    : RtMidiPtr; midiSysex : bool; midiTime : bool;
          midiSense : bool) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_in_ignore_types";
 
    begin
-      rtmidi_in_ignore_types
+      Internal
         (self.device, bool (midiSysex), bool (midiTime), bool (midiSense));
    end ignore_types;
 
    ----------------------------------------------------------------------------
    procedure cancel_callback (self : in out MidiIn) is
 
-      procedure rtmidi_in_cancel_callback (device : RtMidiPtr) with
+      procedure Internal (device : RtMidiPtr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_in_cancel_callback";
 
    begin
-      rtmidi_in_cancel_callback (self.device);
+      Internal (self.device);
    end cancel_callback;
 
    ----------------------------------------------------------------------------
@@ -150,7 +148,7 @@ package body Rtmidi.MidiIn is
               user_data : access User_Data_Type) with
            Convention => C;
 
-         procedure rtmidi_in_set_callback
+         procedure Internal
            (device   : RtMidiPtr; callback : Proxy;
             userData : System.Address) with
            Import        => True, Convention => C,
@@ -173,7 +171,7 @@ package body Rtmidi.MidiIn is
          end wrapper;
 
       begin
-         rtmidi_in_set_callback
+         Internal
            (device   => self.device, callback => wrapper'Access,
             userData => Convert_User_Data (User_Data_Access (user_data)));
       end set_callback;
@@ -185,7 +183,7 @@ package body Rtmidi.MidiIn is
 
       use Interfaces.C;
 
-      function rtmidi_in_get_message
+      function Internal
         (device : RtMidiPtr; message : out char_array; size : out size_t)
          return double with
         Import        => True, Convention => C,
@@ -197,7 +195,7 @@ package body Rtmidi.MidiIn is
       empty  : Message (1 .. 0);
 
    begin
-      ret := rtmidi_in_get_message (self.device, buffer, buflen);
+      ret := Internal (self.device, buffer, buflen);
 
       if ret <= 0.0 then
          deltatime := 0.0;
