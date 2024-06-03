@@ -1,6 +1,10 @@
 name = "rtmidi"
 description = "Ada binding to RtMidi"
-version = "1.0.0"
+version = "0.1.0-dev"
 
-authors = ["shuihuzhuan@free.fr"]
+authors = ["Shuihuzhuan"]
 maintainers = ["Shuihuzhuan <shuihuzhuan@free.fr>"]
+maintainers-logins = ["shuihuzhuan"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = "https://github.com/HROMANO/Rtmidiada"
+tags = ["multimedia", "midi"]

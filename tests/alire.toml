@@ -1,9 +1,13 @@
 name = "rtmidi_tests"
 description = "Rtmidi tests"
-version = "0.0.0"
+version = "0.1.0-dev"
 
 authors = ["Shuihuzhuan"]
 maintainers = ["Shuihuzhuan <shuihuzhuan@free.fr>"]
+maintainers-logins = ["shuihuzhuan"]
+licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
+website = ""
+tags = []
 
 executables = ["rtmidi_tests"]
 
@@ -12,3 +16,4 @@ rtmidi = "*"  # Added by alr
 
 [[pins]]
 rtmidi = { path = ".." }
+

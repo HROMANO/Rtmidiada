@@ -1,21 +1,8 @@
-# ---> Ada
-# Object file
-*.o
-obj/
-lib/
-tests/obj/
-tests/lib/
-
-# Ada Library Information
-*.ali
-
-# Alire
-alire/
-config/
-tests/alire/
-tests/config/
-
-src/cpp
-src/generated
-
-tests/bin/
+/obj/
+/lib/
+/alire/
+/config/
+/examples/obj/
+/examples/bin/
+/examples/alire/
+/examples/config/
