@@ -180,11 +180,7 @@ package body Rtmidi is
 
    begin
       for i in Msg'Range loop
-         if i < Msg'Last then
-            Result (i * 3 - 2 .. i * 3) := To_Hex (Integer (Msg (i))) & " ";
-         else
-            Result (i * 3 - 2 .. i * 3 - 1) := To_Hex (Integer (Msg (i)));
-         end if;
+         Result (i * 3 - 2 .. i * 3) := To_Hex (Integer (Msg (i))) & " ";
       end loop;
 
       return Result;
