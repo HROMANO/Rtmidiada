@@ -1,4 +1,4 @@
-with Ada.Finalization;
+private with Ada.Finalization;
 
 package Rtmidi.MidiOut is
 

@@ -1,4 +1,4 @@
-with Ada.Finalization;
+private with Ada.Finalization;
 
 package Rtmidi.MidiIn is
 
@@ -35,7 +35,6 @@ package Rtmidi.MidiIn is
    generic
       type User_Data_Type is private;
    package Callback_Factory is
-      use Interfaces.C;
       type User_Data_Access is access all User_Data_Type;
       type Callback_Type is
         access procedure

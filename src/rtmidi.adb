@@ -1,5 +1,6 @@
-with Interfaces.C.Strings;
-with Ada.Strings.Unbounded;
+private with Ada.Strings.Unbounded;
+
+private with Interfaces.C.Strings;
 
 package body Rtmidi is
 

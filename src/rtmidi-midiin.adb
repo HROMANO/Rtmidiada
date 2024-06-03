@@ -1,8 +1,9 @@
-with Ada.Text_IO;
-with Ada.Unchecked_Conversion;
+private with Ada.Text_IO;
+private with Ada.Unchecked_Conversion;
 
-with Interfaces.C.Strings;
-with Interfaces.C.Extensions;
+private with Interfaces.C;
+private with Interfaces.C.Strings;
+private with Interfaces.C.Extensions;
 
 with System;
 
@@ -137,6 +138,9 @@ package body Rtmidi.MidiIn is
 
    ----------------------------------------------------------------------------
    package body Callback_Factory is
+
+      use Interfaces.C;
+
       procedure set_callback
         (self      : in out MidiIn; callback : Callback_Type;
          user_data :        access User_Data_Type)

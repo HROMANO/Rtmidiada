@@ -1,6 +1,6 @@
 pragma Ada_2012;
 
-with Interfaces.C;
+private with Interfaces.C;
 
 package Rtmidi is
 

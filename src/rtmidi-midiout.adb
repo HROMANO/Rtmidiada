@@ -1,5 +1,5 @@
-with Interfaces.C;
-with Interfaces.C.Strings;
+private with Interfaces.C;
+private with Interfaces.C.Strings;
 
 package body Rtmidi.MidiOut is
 
