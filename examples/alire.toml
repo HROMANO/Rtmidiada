@@ -1,19 +1,18 @@
-name = "rtmidi_tests"
-description = "Rtmidi tests"
+name = "examples"
+description = "Rtmidi examples"
 version = "0.1.0-dev"
 
 authors = ["Shuihuzhuan"]
 maintainers = ["Shuihuzhuan <shuihuzhuan@free.fr>"]
 maintainers-logins = ["shuihuzhuan"]
 licenses = "MIT OR Apache-2.0 WITH LLVM-exception"
-website = ""
-tags = []
+website = "https://github.com/HROMANO/Rtmidiada"
+tags = ["multimedia", "midi"]
 
-executables = ["rtmidi_tests"]
+executables = ["examples"]
 
-[[depends-on]]  # Added by alr
-rtmidi = "*"  # Added by alr
+[[depends-on]]
+rtmidi = "*"
 
 [[pins]]
 rtmidi = { path = ".." }
-

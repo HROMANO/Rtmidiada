@@ -4,7 +4,7 @@ with RtMidi;
 with RtMidi.MidiIn;
 with RtMidi.MidiOut;
 
-procedure Rtmidi_Tests is
+procedure Examples is
 
     apis     : RtMidi.RtMidiApi_Array := RtMidi.get_compiled_apis;
     midi_in  : Array(apis'Range) of RtMidi.MidiIn.MidiIn;
@@ -80,7 +80,7 @@ begin
     RtMidi.MidiIn.create(midi_in(1), RtMidi.RTMIDI_API_LINUX_ALSA);
     midi_in(1).open_port(1, "First");
     midi_in(1).ignore_types(False, False, False);
-    Put_Line("Waiting for messages…");
+    Put_Line("Waiting for messages...");
     Put_Line("User data is Integer");
     cb_int.set_callback(midi_in(1), cb0'Access, u'Access);
     delay 5.0;
@@ -104,4 +104,5 @@ begin
         midi_in(1).put_message;
     end loop;
 
-end Rtmidi_Tests;
+end Examples;
+
