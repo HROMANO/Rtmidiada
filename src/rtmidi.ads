@@ -19,7 +19,7 @@ package Rtmidi is
    type RtMidiApi_Array is array (Positive range <>) of RtMidiApi with
      Convention => C;
 
-   type RtMidiErrorType is
+   type Rtmidi_Error_Type is
      (RTMIDI_ERROR_WARNING, RTMIDI_ERROR_DEBUG_WARNING,
       RTMIDI_ERROR_UNSPECIFIED, RTMIDI_ERROR_NO_DEVICES_FOUND,
       RTMIDI_ERROR_INVALID_DEVICE, RTMIDI_ERROR_MEMORY_ERROR,
@@ -28,18 +28,18 @@ package Rtmidi is
       RTMIDI_ERROR_THREAD_ERROR) with
      Convention => C;
 
-   function api_name (api : RtMidiApi) return String;
+   function Api_Name (api : RtMidiApi) return String;
 
-   function api_display_name (api : RtMidiApi) return String;
+   function Api_Display_Name (api : RtMidiApi) return String;
 
-   function compiled_api_by_name (name : String) return RtMidiApi;
+   function Compiled_Api_By_Name (name : String) return RtMidiApi;
 
-   function get_compiled_apis return RtMidiApi_Array;
+   function Get_Compiled_Apis return RtMidiApi_Array;
 
    --  procedure error (error_type : RtMidiErrorType;
    --                   msg        : String);
 
-   function to_string (msg : Message) return String;
+   function To_String (msg : Message) return String;
 
 private
    --  type RtMidiWrapper is record
@@ -55,22 +55,22 @@ private
 
    type RtMidiPtr is access all RtMidi;
 
-   procedure open_port
+   procedure Open_Port
      (device : in out RtMidiPtr; number : Natural; name : String);
 
-   procedure open_virtual_port (device : in out RtMidiPtr; name : String);
+   procedure Open_Virtual_Port (device : in out RtMidiPtr; name : String);
 
-   procedure close_port (device : in out RtMidiPtr);
+   procedure Close_Port (device : in out RtMidiPtr);
 
-   function port_count (device : RtMidiPtr) return Natural;
+   function Get_Port_Count (device : RtMidiPtr) return Natural;
 
-   function get_port_name
+   function Get_Port_Name
      (device : RtMidiPtr; number : Natural := 0) return String;
 
-   function to_message
+   function To_Message
      (msg : Interfaces.C.char_array; length : Interfaces.C.size_t)
       return Message;
 
-   function to_hex (value : Natural; pad : Boolean := True) return String;
+   function To_Hex (value : Natural; pad : Boolean := True) return String;
 
 end Rtmidi;

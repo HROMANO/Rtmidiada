@@ -5,7 +5,7 @@ private with Interfaces.C.Strings;
 package body Rtmidi is
 
    ----------------------------------------------------------------------------
-   function api_name (api : RtMidiApi) return String is
+   function Api_Name (api : RtMidiApi) return String is
 
       use Interfaces.C.Strings;
 
@@ -15,10 +15,10 @@ package body Rtmidi is
       name : constant String := Value (Internal (api));
    begin
       return name;
-   end api_name;
+   end Api_Name;
 
    ----------------------------------------------------------------------------
-   function api_display_name (api : RtMidiApi) return String is
+   function Api_Display_Name (api : RtMidiApi) return String is
 
       use Interfaces.C.Strings;
 
@@ -29,10 +29,10 @@ package body Rtmidi is
       name : constant String := Value (Internal (api));
    begin
       return name;
-   end api_display_name;
+   end Api_Display_Name;
 
    ----------------------------------------------------------------------------
-   function compiled_api_by_name (name : String) return RtMidiApi is
+   function Compiled_Api_By_Name (name : String) return RtMidiApi is
 
       use Interfaces.C.Strings;
 
@@ -43,10 +43,10 @@ package body Rtmidi is
       api : constant RtMidiApi := Internal (New_String (name));
    begin
       return api;
-   end compiled_api_by_name;
+   end Compiled_Api_By_Name;
 
    ----------------------------------------------------------------------------
-   procedure open_port
+   procedure Open_Port
      (device : in out RtMidiPtr; number : Natural; name : String)
    is
 
@@ -61,10 +61,10 @@ package body Rtmidi is
 
    begin
       Internal (device, unsigned (number), New_String (name));
-   end open_port;
+   end Open_Port;
 
    ----------------------------------------------------------------------------
-   procedure open_virtual_port (device : in out RtMidiPtr; name : String) is
+   procedure Open_Virtual_Port (device : in out RtMidiPtr; name : String) is
 
       use Interfaces.C.Strings;
 
@@ -74,20 +74,20 @@ package body Rtmidi is
 
    begin
       Internal (device, New_String (name));
-   end open_virtual_port;
+   end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure close_port (device : in out RtMidiPtr) is
+   procedure Close_Port (device : in out RtMidiPtr) is
 
       procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_close_port";
 
    begin
       Internal (device);
-   end close_port;
+   end Close_Port;
 
    ----------------------------------------------------------------------------
-   function port_count (device : RtMidiPtr) return Natural is
+   function Get_Port_Count (device : RtMidiPtr) return Natural is
 
       use Interfaces.C;
 
@@ -97,10 +97,10 @@ package body Rtmidi is
 
    begin
       return Natural (Internal (device));
-   end port_count;
+   end Get_Port_Count;
 
    ----------------------------------------------------------------------------
-   function get_port_name
+   function Get_Port_Name
      (device : RtMidiPtr; number : Natural := 0) return String
    is
 
@@ -132,10 +132,10 @@ package body Rtmidi is
 
       return Value (name, size_t (result));
 
-   end get_port_name;
+   end Get_Port_Name;
 
    ----------------------------------------------------------------------------
-   function get_compiled_apis return RtMidiApi_Array is
+   function Get_Compiled_Apis return RtMidiApi_Array is
 
       --  TODO: quite ugly.
 
@@ -183,24 +183,24 @@ package body Rtmidi is
          end if;
       end;
 
-   end get_compiled_apis;
+   end Get_Compiled_Apis;
 
    ----------------------------------------------------------------------------
-   function to_string (msg : Message) return String is
+   function To_String (msg : Message) return String is
 
       --  Message ensures a 2 character only conversion for to_hex.
       result : String (1 .. (msg'Length * 3 - 1));
 
    begin
       for i in msg'Range loop
-         result (i * 3 - 2 .. i * 3) := to_hex (Integer (msg (i))) & " ";
+         result (i * 3 - 2 .. i * 3) := To_Hex (Integer (msg (i))) & " ";
       end loop;
 
       return result;
-   end to_string;
+   end To_String;
 
    ----------------------------------------------------------------------------
-   function to_message
+   function To_Message
      (msg : Interfaces.C.char_array; length : Interfaces.C.size_t)
       return Message
    is
@@ -218,10 +218,10 @@ package body Rtmidi is
 
       return result;
 
-   end to_message;
+   end To_Message;
 
    ----------------------------------------------------------------------------
-   function to_hex (value : Natural; pad : Boolean := True) return String is
+   function To_Hex (value : Natural; pad : Boolean := True) return String is
 
       use Ada.Strings.Unbounded;
 
@@ -252,6 +252,6 @@ package body Rtmidi is
       end if;
 
       return To_String (result);
-   end to_hex;
+   end To_Hex;
 
 end Rtmidi;

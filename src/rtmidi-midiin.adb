@@ -10,42 +10,42 @@ with System;
 package body Rtmidi.MidiIn is
 
    ----------------------------------------------------------------------------
-   procedure open_port
+   procedure Open_Port
      (self : in out MidiIn; number : Natural := 0;
       name :        String := "RtMidi Input")
    is
    begin
-      open_port (self.device, number, name);
-   end open_port;
+      Open_Port (self.device, number, name);
+   end Open_Port;
 
    ----------------------------------------------------------------------------
-   procedure open_virtual_port
+   procedure Open_Virtual_Port
      (self : in out MidiIn; name : String := "RtMidi Input")
    is
    begin
-      open_virtual_port (self.device, name);
-   end open_virtual_port;
+      Open_Virtual_Port (self.device, name);
+   end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure close_port (self : in out MidiIn) is
+   procedure Close_Port (self : in out MidiIn) is
    begin
-      close_port (self.device);
-   end close_port;
+      Close_Port (self.device);
+   end Close_Port;
 
    ----------------------------------------------------------------------------
-   function port_count (self : MidiIn) return Natural is
+   function Get_Port_Count (self : MidiIn) return Natural is
    begin
-      return port_count (self.device);
-   end port_count;
+      return Get_Port_Count (self.device);
+   end Get_Port_Count;
 
    ----------------------------------------------------------------------------
-   function port_name (self : MidiIn; number : Natural) return String is
+   function Get_Port_Name (self : MidiIn; number : Natural) return String is
    begin
-      return get_port_name (self.device, number);
-   end port_name;
+      return Get_Port_Name (self.device, number);
+   end Get_Port_Name;
 
    ----------------------------------------------------------------------------
-   procedure create (self : in out MidiIn) is
+   procedure Create (self : in out MidiIn) is
 
       function Internal return RtMidiPtr with
         Import        => True, Convention => C,
@@ -53,15 +53,15 @@ package body Rtmidi.MidiIn is
 
    begin
       if self.device /= null then
-         self.free;
+         self.Free;
       end if;
 
       self.device := Internal;
 
-   end create;
+   end Create;
 
    ----------------------------------------------------------------------------
-   procedure create
+   procedure Create
      (self : in out MidiIn; api : RtMidiApi := RTMIDI_API_UNSPECIFIED;
       clientName     :        String   := "RtMidi Input Client";
       queueSizeLimit :        Positive := 100)
@@ -77,15 +77,15 @@ package body Rtmidi.MidiIn is
 
    begin
       if self.device /= null then
-         self.free;
+         self.Free;
       end if;
 
       self.device :=
         Internal (api, New_String (clientName), unsigned (queueSizeLimit));
-   end create;
+   end Create;
 
    ----------------------------------------------------------------------------
-   procedure free (self : in out MidiIn) is
+   procedure Free (self : in out MidiIn) is
 
       procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_in_free";
@@ -93,10 +93,10 @@ package body Rtmidi.MidiIn is
    begin
       Internal (self.device);
       self.device := null;
-   end free;
+   end Free;
 
    ----------------------------------------------------------------------------
-   function get_current_api (self : MidiIn) return RtMidiApi is
+   function Get_Current_Api (self : MidiIn) return RtMidiApi is
 
       function Internal (device : RtMidiPtr) return RtMidiApi with
         Import        => True, Convention => C,
@@ -104,10 +104,10 @@ package body Rtmidi.MidiIn is
 
    begin
       return Internal (self.device);
-   end get_current_api;
+   end Get_Current_Api;
 
    ----------------------------------------------------------------------------
-   procedure ignore_types
+   procedure Ignore_Types
      (self     : in out MidiIn; midiSysex : Boolean := True;
       midiTime :        Boolean := True; midiSense : Boolean := True)
    is
@@ -123,10 +123,10 @@ package body Rtmidi.MidiIn is
    begin
       Internal
         (self.device, bool (midiSysex), bool (midiTime), bool (midiSense));
-   end ignore_types;
+   end Ignore_Types;
 
    ----------------------------------------------------------------------------
-   procedure cancel_callback (self : in out MidiIn) is
+   procedure Cancel_Callback (self : in out MidiIn) is
 
       procedure Internal (device : RtMidiPtr) with
         Import        => True, Convention => C,
@@ -134,14 +134,14 @@ package body Rtmidi.MidiIn is
 
    begin
       Internal (self.device);
-   end cancel_callback;
+   end Cancel_Callback;
 
    ----------------------------------------------------------------------------
    package body Callback_Factory is
 
       use Interfaces.C;
 
-      procedure set_callback
+      procedure Set_Callback
         (self      : in out MidiIn; callback : Callback_Type;
          user_data :        access User_Data_Type)
       is
@@ -171,18 +171,18 @@ package body Rtmidi.MidiIn is
             user_data : access User_Data_Type)
          is
          begin
-            callback (Float (deltatime), to_message (buffer, len), user_data);
+            callback (Float (deltatime), To_Message (buffer, len), user_data);
          end wrapper;
 
       begin
          Internal
            (device   => self.device, callback => wrapper'Access,
             userData => Convert_User_Data (User_Data_Access (user_data)));
-      end set_callback;
+      end Set_Callback;
    end Callback_Factory;
 
    ----------------------------------------------------------------------------
-   function get_message (self : MidiIn; deltatime : out Float) return Message
+   function Get_Message (self : MidiIn; deltatime : out Float) return Message
    is
 
       use Interfaces.C;
@@ -207,24 +207,24 @@ package body Rtmidi.MidiIn is
       else
          deltatime := Float (ret);
          --  buflen has been updated to the real length
-         return to_message (buffer, buflen);
+         return To_Message (buffer, buflen);
       end if;
 
-   end get_message;
+   end Get_Message;
 
    ----------------------------------------------------------------------------
-   function get_message (self : MidiIn) return Message is
+   function Get_Message (self : MidiIn) return Message is
       deltatime : Float := 0.0;
    begin
-      return get_message (self, deltatime);
-   end get_message;
+      return Get_Message (self, deltatime);
+   end Get_Message;
 
    ----------------------------------------------------------------------------
-   procedure put_message (self : MidiIn) is
+   procedure Put_Message (self : MidiIn) is
 
       use Ada.Text_IO;
 
-      msg : constant String := to_string (get_message (self));
+      msg : constant String := To_String (Get_Message (self));
 
    begin
 
@@ -232,12 +232,12 @@ package body Rtmidi.MidiIn is
          Put_Line (msg);
       end if;
 
-   end put_message;
+   end Put_Message;
 
    ----------------------------------------------------------------------------
    overriding procedure Finalize (self : in out MidiIn) is
    begin
-      self.free;
+      self.Free;
    end Finalize;
 
 end Rtmidi.MidiIn;

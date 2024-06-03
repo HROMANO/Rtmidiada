@@ -4,42 +4,42 @@ private with Interfaces.C.Strings;
 package body Rtmidi.MidiOut is
 
    ----------------------------------------------------------------------------
-   procedure open_port
+   procedure Open_Port
      (self : in out MidiOut; number : Natural := 0;
       name :        String := "RtMidi Output")
    is
    begin
-      open_port (self.device, number, name);
-   end open_port;
+      Open_Port (self.device, number, name);
+   end Open_Port;
 
    ----------------------------------------------------------------------------
-   procedure open_virtual_port
+   procedure Open_Virtual_Port
      (self : in out MidiOut; name : String := "RtMidi Output")
    is
    begin
-      open_virtual_port (self.device, name);
-   end open_virtual_port;
+      Open_Virtual_Port (self.device, name);
+   end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure close_port (self : in out MidiOut) is
+   procedure Close_Port (self : in out MidiOut) is
    begin
-      close_port (self.device);
-   end close_port;
+      Close_Port (self.device);
+   end Close_Port;
 
    ----------------------------------------------------------------------------
-   function port_count (self : MidiOut) return Natural is
+   function Get_Port_Count (self : MidiOut) return Natural is
    begin
-      return port_count (self.device);
-   end port_count;
+      return Get_Port_Count (self.device);
+   end Get_Port_Count;
 
    ----------------------------------------------------------------------------
-   function port_name (self : MidiOut; number : Natural) return String is
+   function Get_Port_Name (self : MidiOut; number : Natural) return String is
    begin
-      return get_port_name (self.device, number);
-   end port_name;
+      return Get_Port_Name (self.device, number);
+   end Get_Port_Name;
 
    ----------------------------------------------------------------------------
-   procedure create (self : in out MidiOut) is
+   procedure Create (self : in out MidiOut) is
 
       function Internal return RtMidiPtr with
         Import        => True, Convention => C,
@@ -47,15 +47,15 @@ package body Rtmidi.MidiOut is
 
    begin
       if self.device /= null then
-         self.free;
+         self.Free;
       end if;
 
       self.device := Internal;
 
-   end create;
+   end Create;
 
    ----------------------------------------------------------------------------
-   procedure create
+   procedure Create
      (self       : in out MidiOut; api : RtMidiApi := RTMIDI_API_UNSPECIFIED;
       clientName :        String := "RtMidi Output Client")
    is
@@ -68,15 +68,15 @@ package body Rtmidi.MidiOut is
 
    begin
       if self.device /= null then
-         self.free;
+         self.Free;
       end if;
 
       self.device := Internal (api, New_String (clientName));
 
-   end create;
+   end Create;
 
    ----------------------------------------------------------------------------
-   procedure free (self : in out MidiOut) is
+   procedure Free (self : in out MidiOut) is
 
       procedure Internal (device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_out_free";
@@ -84,10 +84,10 @@ package body Rtmidi.MidiOut is
    begin
       Internal (self.device);
       self.device := null;
-   end free;
+   end Free;
 
    ----------------------------------------------------------------------------
-   function get_current_api (self : MidiOut) return RtMidiApi is
+   function Get_Current_Api (self : MidiOut) return RtMidiApi is
 
       function Internal (device : RtMidiPtr) return RtMidiApi with
         Import        => True, Convention => C,
@@ -95,10 +95,10 @@ package body Rtmidi.MidiOut is
 
    begin
       return Internal (self.device);
-   end get_current_api;
+   end Get_Current_Api;
 
    ----------------------------------------------------------------------------
-   function send_message
+   function Send_Message
      (self : in out MidiOut; message : String) return Integer
    is
 
@@ -114,7 +114,7 @@ package body Rtmidi.MidiOut is
       return
         Integer
           (Internal (self.device, To_C (message, False), message'Length));
-   end send_message;
+   end Send_Message;
 
    ----------------------------------------------------------------------------
 end Rtmidi.MidiOut;

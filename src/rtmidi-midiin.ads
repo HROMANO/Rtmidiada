@@ -4,33 +4,33 @@ package Rtmidi.MidiIn is
 
    type MidiIn is tagged limited private;
 
-   procedure open_port
+   procedure Open_Port
      (self : in out MidiIn; number : Natural := 0;
       name :        String := "RtMidi Input");
 
-   procedure open_virtual_port
+   procedure Open_Virtual_Port
      (self : in out MidiIn; name : String := "RtMidi Input");
 
-   procedure close_port (self : in out MidiIn);
+   procedure Close_Port (self : in out MidiIn);
 
-   function port_count (self : MidiIn) return Natural;
+   function Get_Port_Count (self : MidiIn) return Natural;
 
-   function port_name (self : MidiIn; number : Natural) return String;
+   function Get_Port_Name (self : MidiIn; number : Natural) return String;
 
-   procedure create (self : in out MidiIn);
+   procedure Create (self : in out MidiIn);
 
-   procedure create
-     (self : in out MidiIn; api : RtMidiApi := RTMIDI_API_UNSPECIFIED;
+   procedure Create
+     (self           : in out MidiIn; api : RtMidiApi := RTMIDI_API_UNSPECIFIED;
       clientName     :        String   := "RtMidi Input Client";
       queueSizeLimit :        Positive := 100);
 
-   function get_current_api (self : MidiIn) return RtMidiApi;
+   function Get_Current_Api (self : MidiIn) return RtMidiApi;
 
-   procedure ignore_types
+   procedure Ignore_Types
      (self     : in out MidiIn; midiSysex : Boolean := True;
       midiTime :        Boolean := True; midiSense : Boolean := True);
 
-   procedure cancel_callback (self : in out MidiIn);
+   procedure Cancel_Callback (self : in out MidiIn);
 
    generic
       type User_Data_Type is private;
@@ -40,16 +40,16 @@ package Rtmidi.MidiIn is
         access procedure
           (deltatime : Float; msg : Message;
            user_data : access User_Data_Type);
-      procedure set_callback
+      procedure Set_Callback
         (self      : in out MidiIn; callback : Callback_Type;
          user_data :        access User_Data_Type);
    end Callback_Factory;
 
-   function get_message (self : MidiIn; deltatime : out Float) return Message;
+   function Get_Message (self : MidiIn; deltatime : out Float) return Message;
 
-   function get_message (self : MidiIn) return Message;
+   function Get_Message (self : MidiIn) return Message;
 
-   procedure put_message (self : MidiIn);
+   procedure Put_Message (self : MidiIn);
 
 private
 
@@ -57,7 +57,7 @@ private
       device : RtMidiPtr := null;
    end record;
 
-   procedure free (self : in out MidiIn);
+   procedure Free (self : in out MidiIn);
 
    overriding procedure Finalize (self : in out MidiIn);
 
