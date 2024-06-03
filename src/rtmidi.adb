@@ -4,254 +4,240 @@ private with Interfaces.C.Strings;
 
 package body Rtmidi is
 
+   package IC renames Interfaces.C;
+   package ICS renames Interfaces.C.Strings;
+
    ----------------------------------------------------------------------------
-   function Api_Name (api : RtMidiApi) return String is
+   function Api_Name (Api : Rtmidi_Api) return String is
 
-      use Interfaces.C.Strings;
-
-      function Internal (api : RtMidiApi) return chars_ptr with
+      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr with
         Import => True, Convention => C, External_Name => "rtmidi_api_name";
 
-      name : constant String := Value (Internal (api));
    begin
-      return name;
+      return ICS.Value (Internal (Api));
    end Api_Name;
 
    ----------------------------------------------------------------------------
-   function Api_Display_Name (api : RtMidiApi) return String is
+   function Api_Display_Name (Api : Rtmidi_Api) return String is
 
-      use Interfaces.C.Strings;
-
-      function Internal (api : RtMidiApi) return chars_ptr with
+      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr with
         Import        => True, Convention => C,
         External_Name => "rtmidi_api_display_name";
 
-      name : constant String := Value (Internal (api));
    begin
-      return name;
+      return ICS.Value (Internal (Api));
    end Api_Display_Name;
 
    ----------------------------------------------------------------------------
-   function Compiled_Api_By_Name (name : String) return RtMidiApi is
+   function Compiled_api_By_Name (Name : String) return Rtmidi_Api is
 
-      use Interfaces.C.Strings;
-
-      function Internal (name : chars_ptr) return RtMidiApi with
+      function Internal (Name : ICS.chars_ptr) return Rtmidi_Api with
         Import        => True, Convention => C,
         External_Name => "rtmidi_compiled_api_by_name";
 
-      api : constant RtMidiApi := Internal (New_String (name));
    begin
-      return api;
-   end Compiled_Api_By_Name;
+      return Internal (ICS.New_String (Name));
+   end Compiled_api_By_Name;
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (device : in out RtMidiPtr; number : Natural; name : String)
+     (Device : in out RtMidiPtr; Number : Natural; Name : String)
    is
 
-      use Interfaces.C;
-      use Interfaces.C.Strings;
-
       procedure Internal
-        (device     : RtMidiPtr;
-         portNumber : unsigned; -- if 0, the first available.
-         portName   : chars_ptr) with
+        (Device      : RtMidiPtr;
+         Port_Number : IC.unsigned; -- if 0, the first available.
+         Port_Name   : ICS.chars_ptr) with
         Import => True, Convention => C, External_Name => "rtmidi_open_port";
 
    begin
-      Internal (device, unsigned (number), New_String (name));
+      Internal (Device, IC.unsigned (Number), ICS.New_String (Name));
    end Open_Port;
 
    ----------------------------------------------------------------------------
-   procedure Open_Virtual_Port (device : in out RtMidiPtr; name : String) is
+   procedure Open_Virtual_Port (Device : in out RtMidiPtr; Name : String) is
 
-      use Interfaces.C.Strings;
-
-      procedure Internal (device : in out RtMidiPtr; portName : chars_ptr) with
+      procedure Internal
+        (Device : in out RtMidiPtr; Port_Name : ICS.chars_ptr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
    begin
-      Internal (device, New_String (name));
+      Internal (Device, ICS.New_String (Name));
    end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure Close_Port (device : in out RtMidiPtr) is
+   procedure Close_Port (Device : in out RtMidiPtr) is
 
-      procedure Internal (device : RtMidiPtr) with
+      procedure Internal (Device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_close_port";
 
    begin
-      Internal (device);
+      Internal (Device);
    end Close_Port;
 
    ----------------------------------------------------------------------------
-   function Get_Port_Count (device : RtMidiPtr) return Natural is
+   function Get_Port_Count (Device : RtMidiPtr) return Natural is
 
-      use Interfaces.C;
-
-      function Internal (device : RtMidiPtr) return unsigned with
+      function Internal (Device : RtMidiPtr) return IC.unsigned with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_port_count";
 
    begin
-      return Natural (Internal (device));
+      return Natural (Internal (Device));
    end Get_Port_Count;
 
    ----------------------------------------------------------------------------
    function Get_Port_Name
-     (device : RtMidiPtr; number : Natural := 0) return String
+     (Device : RtMidiPtr; Number : Natural := 0) return String
    is
 
-      use Interfaces.C;
-      use Interfaces.C.Strings;
+      use type IC.int;
 
       function Internal
-        (device :     RtMidiPtr; portNumber : unsigned; bufOut : chars_ptr;
-         bufLen : out int) return int with
+        (Device  : RtMidiPtr; Port_Number : IC.unsigned;
+         Buf_Out : ICS.chars_ptr; Buf_Len : out IC.int) return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_port_name";
 
-      result : int := 0;
-      buflen : int := 0;
-      name   : chars_ptr;
+      Result  : IC.int := 0;
+      Buf_Len : IC.int := 0;
+      Name    : ICS.chars_ptr;
    begin
-      result := Internal (device, unsigned (number), Null_Ptr, buflen);
+      Result := Internal (Device, IC.unsigned (Number), ICS.Null_Ptr, Buf_Len);
 
-      if result < 0 then
+      if Result < 0 then
          return "";
       end if;
 
-      name   := New_String ((1 .. Integer (buflen) => ' '));
-      result := Internal (device, unsigned (number), name, buflen);
+      Name   := ICS.New_String ((1 .. Integer (Buf_Len) => ' '));
+      Result := Internal (Device, IC.unsigned (Number), Name, Buf_Len);
 
-      if result <= 0 then
+      if Result <= 0 then
          return "";
       end if;
 
-      return Value (name, size_t (result));
+      return ICS.Value (Name, IC.size_t (Result));
 
    end Get_Port_Name;
 
    ----------------------------------------------------------------------------
-   function Get_Compiled_Apis return RtMidiApi_Array is
+   function Get_Compiled_apis return Rtmidi_Api_Array is
 
       --  TODO: quite ugly.
 
-      use Interfaces.C;
-      use Interfaces.C.Strings;
+      use type IC.int;
 
       function Internal_Get
-        (apis : in out RtMidiApi_Array; apis_size : unsigned) return int with
+        (Apis : in out Rtmidi_Api_Array; Apis_Size : IC.unsigned)
+         return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
       function Internal_Get_Num
-        (apis : chars_ptr; apis_size : unsigned) return int with
+        (Apis : ICS.chars_ptr; Apis_Size : IC.unsigned) return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
-      size : unsigned := 0;
-      ret  : int      := 0;
+      Size : IC.unsigned := 0;
+      Ret  : IC.int      := 0;
 
    begin
-      ret := Internal_Get_Num (Null_Ptr, 0);
+      Ret := Internal_Get_Num (ICS.Null_Ptr, 0);
 
-      if ret <= 0 then
+      if Ret <= 0 then
          declare
-            result : RtMidiApi_Array (1 .. 0);
+            Result : Rtmidi_Api_Array (1 .. 0);
          begin
-            return result;
+            return Result;
          end;
       else
-         size := unsigned (ret);
+         Size := IC.unsigned (Ret);
       end if;
 
       declare
-         result : RtMidiApi_Array (1 .. Integer (size));
+         Result : Rtmidi_Api_Array (1 .. Integer (Size));
       begin
-         ret := Internal_Get (result, size);
-         if ret <= 0 then
+         Ret := Internal_Get (Result, Size);
+         if Ret <= 0 then
             declare
-               result : RtMidiApi_Array (1 .. 0);
+               Result : Rtmidi_Api_Array (1 .. 0);
             begin
-               return result;
+               return Result;
             end;
          else
-            return result;
+            return Result;
          end if;
       end;
 
-   end Get_Compiled_Apis;
+   end Get_Compiled_apis;
 
    ----------------------------------------------------------------------------
-   function To_String (msg : Message) return String is
+   function To_String (Msg : Message) return String is
 
-      --  Message ensures a 2 character only conversion for to_hex.
-      result : String (1 .. (msg'Length * 3 - 1));
+      --  Message ensures a 2 character only conversion for To_Hex.
+      Result : String (1 .. (Msg'Length * 3 - 1));
 
    begin
-      for i in msg'Range loop
-         result (i * 3 - 2 .. i * 3) := To_Hex (Integer (msg (i))) & " ";
+      for i in Msg'Range loop
+         Result (i * 3 - 2 .. i * 3) := To_Hex (Integer (Msg (i))) & " ";
       end loop;
 
-      return result;
+      return Result;
    end To_String;
 
    ----------------------------------------------------------------------------
    function To_Message
-     (msg : Interfaces.C.char_array; length : Interfaces.C.size_t)
+     (Msg : Interfaces.C.char_array; Length : Interfaces.C.size_t)
       return Message
    is
 
-      use Interfaces.C;
-
-      result : Message (1 .. Positive (length));
+      Result : Message (1 .. Positive (Length));
 
    begin
 
-      for i in 1 .. Positive (length) loop
-         --  msg index starts at 0 and not 1, so 'i - 1'
-         result (i) := Byte (Character'Pos (To_Ada (msg (size_t (i - 1)))));
+      for I in 1 .. Positive (Length) loop
+         --  Msg index starts at 0 and not 1, so 'i - 1'
+         Result (I) :=
+           Byte (Character'Pos (IC.To_Ada (Msg (IC.size_t (I - 1)))));
       end loop;
 
-      return result;
+      return Result;
 
    end To_Message;
 
    ----------------------------------------------------------------------------
-   function To_Hex (value : Natural; pad : Boolean := True) return String is
+   function To_Hex (Value : Natural; Pad : Boolean := True) return String is
 
       use Ada.Strings.Unbounded;
 
-      temp1 : Natural;
-      temp2 : Natural;
+      Temp1 : Natural;
+      Temp2 : Natural;
 
-      hexa   : constant String  := "0123456789ABCDEF";
-      result : Unbounded_String := Null_Unbounded_String;
+      Hexa   : constant String  := "0123456789ABCDEF";
+      Result : Unbounded_String := Null_Unbounded_String;
    begin
 
-      if value = 0 then
-         if pad then
+      if Value = 0 then
+         if Pad then
             return "00";
          else
             return "0";
          end if;
       end if;
 
-      temp2 := value;
-      while temp2 > 0 loop
-         temp1  := temp2 mod 16;
-         result := hexa (temp1 + 1) & result;
-         temp2  := temp2 / 16;
+      Temp2 := Value;
+      while Temp2 > 0 loop
+         Temp1  := Temp2 mod 16;
+         Result := Hexa (Temp1 + 1) & Result;
+         Temp2  := Temp2 / 16;
       end loop;
 
-      if pad and then (Length (result) mod 2) /= 0 then
-         result := "0" & result;
+      if Pad and then (Length (Result) mod 2) /= 0 then
+         Result := "0" & Result;
       end if;
 
-      return To_String (result);
+      return To_String (Result);
    end To_Hex;
 
 end Rtmidi;

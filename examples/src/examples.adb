@@ -3,45 +3,45 @@ pragma Ada_2022;
 with Ada.Text_IO; use Ada.Text_IO;
 
 with Rtmidi;
-with Rtmidi.MidiIn;
-with Rtmidi.MidiOut;
+with Rtmidi.Midi_In;
+with Rtmidi.Midi_Out;
 
 procedure Examples is
 
-   apis     : constant Rtmidi.RtMidiApi_Array := Rtmidi.Get_Compiled_Apis;
-   midi_in  : array (apis'Range) of Rtmidi.MidiIn.MidiIn;
-   midi_out : array (apis'Range) of Rtmidi.MidiOut.MidiOut;
-   nb_ports : array (apis'Range) of Natural   := [others => 0];
+   apis     : constant Rtmidi.Rtmidi_Api_Array := Rtmidi.Get_Compiled_Apis;
+   midi_in  : array (apis'Range) of Rtmidi.Midi_In.Midi_In;
+   midi_out : array (apis'Range) of Rtmidi.Midi_Out.Midi_Out;
+   nb_ports : array (apis'Range) of Natural    := [others => 0];
 
-   type essai is new String (1 .. 10);
+   type Essai is new String (1 .. 10);
 
-   package cb_int is new Rtmidi.MidiIn.Callback_Factory
+   package cb_int is new Rtmidi.Midi_In.Callback_Factory
      (User_Data_Type => Integer);
-   package cb_str is new Rtmidi.MidiIn.Callback_Factory
-     (User_Data_Type => essai);
+   package cb_str is new Rtmidi.Midi_In.Callback_Factory
+     (User_Data_Type => Essai);
 
    procedure cb0
-     (deltatime : Float; msg : Rtmidi.Message; user_data : access Integer)
+     (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access Integer)
    is
    begin
-      user_data.all := user_data.all + 1;
-      Put ("Deltatime = " & deltatime'Image & " - Message read = ");
-      Put (Rtmidi.To_String (msg));
-      Put_Line (" - User data = " & Integer'Image (user_data.all));
+      User_Data.all := User_Data.all + 1;
+      Put ("Deltatime = " & Delta_Time'Image & " - Message read = ");
+      Put (Rtmidi.To_String (Msg));
+      Put_Line (" - User data = " & Integer'Image (User_Data.all));
    end cb0;
 
    procedure cb1
-     (deltatime : Float; msg : Rtmidi.Message; user_data : access essai)
+     (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access Essai)
    is
    begin
-      user_data.all (1) := user_data.all (2);
-      Put ("Delta = " & deltatime'Image & " - Message lu = ");
-      Put (Rtmidi.To_String (msg));
-      Put_Line (" - User data = " & String (user_data.all));
+      User_Data.all (1) := User_Data.all (2);
+      Put ("Delta = " & Delta_Time'Image & " - Message lu = ");
+      Put (Rtmidi.To_String (Msg));
+      Put_Line (" - User data = " & String (User_Data.all));
    end cb1;
 
    u       : aliased Integer := 0;
-   v       : aliased essai   := "abc       ";
+   v       : aliased Essai   := "abc       ";
    message : String          := "00";
    ret     : Integer         := 0;
 
@@ -53,7 +53,7 @@ begin
       Put_Line ("API display name: " & Rtmidi.Api_Display_Name (apis (i)));
       Put_Line ("-----------");
 
-      Rtmidi.MidiIn.Create (midi_in (i), apis (i));
+      Rtmidi.Midi_In.Create (midi_in (i), apis (i));
       nb_ports (i) := midi_in (i).Get_Port_Count;
       Put_Line ("Input ports number:" & Natural'Image (nb_ports (i)));
       for j in 0 .. nb_ports (i) - 1 loop
@@ -69,7 +69,7 @@ begin
       midi_in (i).Close_Port;
       Put_Line ("-----------");
 
-      Rtmidi.MidiOut.Create (midi_out (i), apis (i));
+      Rtmidi.Midi_Out.Create (midi_out (i), apis (i));
       nb_ports (i) := midi_out (i).Get_Port_Count;
       Put_Line ("Output ports number:" & Natural'Image (nb_ports (i)));
       for j in 0 .. nb_ports (i) - 1 loop
@@ -89,7 +89,7 @@ begin
 
    end loop;
 
-   Rtmidi.MidiIn.Create (midi_in (1), Rtmidi.RTMIDI_API_LINUX_ALSA);
+   Rtmidi.Midi_In.Create (midi_in (1), Rtmidi.Linux_Alsa);
    midi_in (1).Open_Port (1, "First");
    midi_in (1).Ignore_Types (False, False, False);
    Put_Line ("Waiting for messages...");
@@ -103,7 +103,7 @@ begin
    delay 5.0;
 
    Put_Line ("Some MIDI Out");
-   Rtmidi.MidiOut.Create (midi_out (1), Rtmidi.RTMIDI_API_LINUX_ALSA);
+   Rtmidi.Midi_Out.Create (midi_out (1), Rtmidi.Linux_Alsa);
    midi_out (1).Open_Port (1, "First");
    message (1) := Character'Val (16#C0#);
    message (2) := Character'Val (16#11#);

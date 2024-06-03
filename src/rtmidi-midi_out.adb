@@ -1,120 +1,117 @@
 private with Interfaces.C;
 private with Interfaces.C.Strings;
 
-package body Rtmidi.MidiOut is
+package body Rtmidi.Midi_Out is
+
+   package IC renames Interfaces.C;
+   package ICS renames Interfaces.C.Strings;
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (self : in out MidiOut; number : Natural := 0;
-      name :        String := "RtMidi Output")
+     (Self : in out Midi_Out; Number : Natural := 0;
+      Name :        String := "RtMidi Output")
    is
    begin
-      Open_Port (self.device, number, name);
+      Open_Port (Self.Device, Number, Name);
    end Open_Port;
 
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port
-     (self : in out MidiOut; name : String := "RtMidi Output")
+     (Self : in out Midi_Out; Name : String := "RtMidi Output")
    is
    begin
-      Open_Virtual_Port (self.device, name);
+      Open_Virtual_Port (Self.Device, Name);
    end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure Close_Port (self : in out MidiOut) is
+   procedure Close_Port (Self : in out Midi_Out) is
    begin
-      Close_Port (self.device);
+      Close_Port (Self.Device);
    end Close_Port;
 
    ----------------------------------------------------------------------------
-   function Get_Port_Count (self : MidiOut) return Natural is
+   function Get_Port_Count (Self : Midi_Out) return Natural is
    begin
-      return Get_Port_Count (self.device);
+      return Get_Port_Count (Self.Device);
    end Get_Port_Count;
 
    ----------------------------------------------------------------------------
-   function Get_Port_Name (self : MidiOut; number : Natural) return String is
-   begin
-      return Get_Port_Name (self.device, number);
-   end Get_Port_Name;
+   function Get_Port_Name (Self : Midi_Out; Number : Natural) return String is
+     (Get_Port_Name (Self.Device, Number));
 
    ----------------------------------------------------------------------------
-   procedure Create (self : in out MidiOut) is
+   procedure Create (Self : in out Midi_Out) is
 
       function Internal return RtMidiPtr with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_create_default";
 
    begin
-      if self.device /= null then
-         self.Free;
+      if Self.Device /= null then
+         Self.Free;
       end if;
 
-      self.device := Internal;
+      Self.Device := Internal;
 
    end Create;
 
    ----------------------------------------------------------------------------
    procedure Create
-     (self       : in out MidiOut; api : RtMidiApi := RTMIDI_API_UNSPECIFIED;
-      clientName :        String := "RtMidi Output Client")
+     (Self        : in out Midi_Out; Api : Rtmidi_Api := Unspecified;
+      Client_Name :        String := "RtMidi Output Client")
    is
 
-      use Interfaces.C.Strings;
-
       function Internal
-        (api : RtMidiApi; clientName : chars_ptr) return RtMidiPtr with
+        (Api : Rtmidi_Api; Client_Name : ICS.chars_ptr) return RtMidiPtr with
         Import => True, Convention => C, External_Name => "rtmidi_out_create";
 
    begin
-      if self.device /= null then
-         self.Free;
+      if Self.Device /= null then
+         Self.Free;
       end if;
 
-      self.device := Internal (api, New_String (clientName));
+      Self.Device := Internal (Api, ICS.New_String (Client_Name));
 
    end Create;
 
    ----------------------------------------------------------------------------
-   procedure Free (self : in out MidiOut) is
+   procedure Free (Self : in out Midi_Out) is
 
-      procedure Internal (device : RtMidiPtr) with
+      procedure Internal (Device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_out_free";
 
    begin
-      Internal (self.device);
-      self.device := null;
+      Internal (Self.Device);
+      Self.Device := null;
    end Free;
 
    ----------------------------------------------------------------------------
-   function Get_Current_Api (self : MidiOut) return RtMidiApi is
+   function Get_Current_Api (Self : Midi_Out) return Rtmidi_Api is
 
-      function Internal (device : RtMidiPtr) return RtMidiApi with
+      function Internal (Device : RtMidiPtr) return Rtmidi_Api with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_get_current_api";
 
    begin
-      return Internal (self.device);
+      return Internal (Self.Device);
    end Get_Current_Api;
 
    ----------------------------------------------------------------------------
    function Send_Message
-     (self : in out MidiOut; message : String) return Integer
+     (Self : in out Midi_Out; Message : String) return Integer
    is
 
-      use Interfaces.C;
-
       function Internal
-        (device : RtMidiPtr; message : char_array; length : int)
-         return int with
+        (device : RtMidiPtr; Message : IC.char_array; length : IC.int)
+         return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_send_message";
 
    begin
       return
         Integer
-          (Internal (self.device, To_C (message, False), message'Length));
+          (Internal (Self.Device, IC.To_C (Message, False), Message'Length));
    end Send_Message;
 
    ----------------------------------------------------------------------------
-end Rtmidi.MidiOut;
+end Rtmidi.Midi_Out;
