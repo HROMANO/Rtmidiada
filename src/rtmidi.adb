@@ -35,13 +35,11 @@ package body Rtmidi is
 
       use Interfaces.C.Strings;
 
-      function Internal
-        (name : chars_ptr) return RtMidiApi with
+      function Internal (name : chars_ptr) return RtMidiApi with
         Import        => True, Convention => C,
         External_Name => "rtmidi_compiled_api_by_name";
 
-      api : constant RtMidiApi :=
-        Internal (New_String (name));
+      api : constant RtMidiApi := Internal (New_String (name));
    begin
       return api;
    end compiled_api_by_name;
@@ -56,8 +54,8 @@ package body Rtmidi is
 
       procedure Internal
         (device     : in out RtMidiPtr;
-         portNumber : unsigned; -- if 0, the first available.
-         portName   : chars_ptr) with
+         portNumber :        unsigned; -- if 0, the first available.
+         portName   :        chars_ptr) with
         Import => True, Convention => C, External_Name => "rtmidi_open_port";
 
    begin
@@ -69,8 +67,7 @@ package body Rtmidi is
 
       use Interfaces.C.Strings;
 
-      procedure Internal
-        (device : in out RtMidiPtr; portName : chars_ptr) with
+      procedure Internal (device : in out RtMidiPtr; portName : chars_ptr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
@@ -119,8 +116,7 @@ package body Rtmidi is
       buflen : int := 0;
       name   : chars_ptr;
    begin
-      result :=
-        Internal (device, unsigned (number), Null_Ptr, buflen);
+      result := Internal (device, unsigned (number), Null_Ptr, buflen);
 
       if result < 0 then
          return "";
