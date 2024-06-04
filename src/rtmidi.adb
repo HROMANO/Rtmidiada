@@ -184,6 +184,18 @@ package body Rtmidi is
    end Get_Version;
 
    ----------------------------------------------------------------------------
+   function Valid (Device : RtMidiPtr) return Boolean is
+   begin
+      return Device.Ok;
+   end Valid;
+
+   ----------------------------------------------------------------------------
+   function Error_Message (Device : RtMidiPtr) return String is
+   begin
+      return ICS.Value (Device.Error_Message);
+   end Error_Message;
+
+   ----------------------------------------------------------------------------
    function To_String (Msg : Message) return String is
 
       --  Message ensures a 2 character only conversion for To_Hex.

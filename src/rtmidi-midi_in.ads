@@ -52,6 +52,10 @@ package Rtmidi.Midi_In is
 
    procedure Put_Message (Self : Midi_In);
 
+   function Valid (Self : Midi_In) return Boolean;
+
+   function Error_Message (Self : Midi_In) return String;
+
 private
 
    type Midi_In is new Ada.Finalization.Limited_Controlled with record

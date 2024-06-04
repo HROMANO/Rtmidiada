@@ -47,7 +47,7 @@ procedure Examples is
 
 begin
 
-   Put_Line ("Version: " & Rtmidi.Get_Version);
+   Put_Line ("RtMidi version: " & Rtmidi.Get_Version);
 
    for i in apis'Range loop
 
@@ -68,6 +68,8 @@ begin
       Put_Line
         ("Current API: " &
            Rtmidi.Api_Display_Name (midi_in (i).Get_Current_Api));
+      Put_Line ("Valid: " & midi_in (i).Valid'Image);
+      Put_Line ("Error message: " & midi_in (i).Error_Message);
       midi_in (i).Close_Port;
       Put_Line ("-----------");
 
@@ -84,6 +86,8 @@ begin
       Put_Line
         ("Current API: " &
            Rtmidi.Api_Display_Name (midi_out (i).Get_Current_Api));
+      Put_Line ("Valid: " & midi_out (i).Valid'Image);
+      Put_Line ("Error message: " & midi_out (i).Error_Message);
       midi_out (i).Close_Port;
       Put_Line ("-----------");
 

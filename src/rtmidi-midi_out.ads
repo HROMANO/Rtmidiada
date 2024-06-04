@@ -28,6 +28,10 @@ package Rtmidi.Midi_Out is
    function Send_Message
      (Self : in out Midi_Out; Message : String) return Integer;
 
+   function Valid (Self : Midi_Out) return Boolean;
+
+   function Error_Message (Self : Midi_Out) return String;
+
 private
 
    type Midi_Out is new Ada.Finalization.Limited_Controlled with record

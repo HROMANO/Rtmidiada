@@ -114,4 +114,12 @@ package body Rtmidi.Midi_Out is
    end Send_Message;
 
    ----------------------------------------------------------------------------
+   function Valid (Self : Midi_Out) return Boolean is
+     (Valid (Self.Device));
+
+   ----------------------------------------------------------------------------
+   function Error_Message (Self : Midi_Out) return String is
+     (Error_Message (Self.Device));
+
+   ----------------------------------------------------------------------------
 end Rtmidi.Midi_Out;

@@ -1,6 +1,8 @@
 pragma Ada_2012;
 
 private with Interfaces.C;
+private with Interfaces.C.Strings;
+private with System;
 
 ------------
 -- Rtmidi --
@@ -37,24 +39,22 @@ package Rtmidi is
 
    function Get_Version return String;
 
-   --  procedure error (The_Type : Error_Type;
-   --                   Msg      : String);
-
    function To_String (Msg : Message) return String;
 
 private
-   --  type RtMidiWrapper is record
-   --      ptr  : System.Address;
-   --      data : System.Address;
-   --      ok   : Boolean;
-   --      msg  : Interfaces.C.Strings.chars_ptr;
-   --  end record
-   --  with Convention => C;
 
-   type RtMidi is limited null record with
-     Convention => C;
+   type RtMidi is limited record
+      Ptr           : System.Address;
+      Data          : System.Address;
+      Ok            : Boolean;
+      Error_Message : Interfaces.C.Strings.chars_ptr;
+   end record with Convention => C;
 
    type RtMidiPtr is access all RtMidi;
+
+   function Valid (Device : RtMidiPtr) return Boolean;
+
+   function Error_Message (Device : RtMidiPtr) return String;
 
    procedure Open_Port
      (Device : in out RtMidiPtr; Number : Natural; Name : String);

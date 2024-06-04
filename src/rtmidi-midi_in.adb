@@ -231,6 +231,14 @@ package body Rtmidi.Midi_In is
    end Put_Message;
 
    ----------------------------------------------------------------------------
+   function Valid (Self : Midi_In) return Boolean is
+     (Valid (Self.Device));
+
+   ----------------------------------------------------------------------------
+   function Error_Message (Self : Midi_In) return String is
+     (Error_Message (Self.Device));
+
+   ----------------------------------------------------------------------------
    overriding procedure Finalize (Self : in out Midi_In) is
    begin
       Self.Free;
