@@ -29,7 +29,7 @@ package body Rtmidi is
    end Api_Display_Name;
 
    ----------------------------------------------------------------------------
-   function Compiled_api_By_Name (Name : String) return Rtmidi_Api is
+   function Compiled_Api_By_Name (Name : String) return Rtmidi_Api is
 
       function Internal (Name : ICS.chars_ptr) return Rtmidi_Api with
         Import        => True, Convention => C,
@@ -37,7 +37,7 @@ package body Rtmidi is
 
    begin
       return Internal (ICS.New_String (Name));
-   end Compiled_api_By_Name;
+   end Compiled_Api_By_Name;
 
    ----------------------------------------------------------------------------
    procedure Open_Port
@@ -171,6 +171,17 @@ package body Rtmidi is
       end;
 
    end Get_Compiled_apis;
+
+   ----------------------------------------------------------------------------
+   function Get_Version return String is
+
+      function Internal return ICS.chars_ptr with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_get_version";
+   begin
+      return ICS.Value (Internal);
+   end Get_Version;
 
    ----------------------------------------------------------------------------
    function To_String (Msg : Message) return String is

@@ -47,6 +47,8 @@ procedure Examples is
 
 begin
 
+   Put_Line ("Version: " & Rtmidi.Get_Version);
+
    for i in apis'Range loop
 
       Put_Line ("API name: " & Rtmidi.Api_Name (apis (i)));

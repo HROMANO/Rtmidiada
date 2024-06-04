@@ -35,6 +35,8 @@ package Rtmidi is
 
    function Get_Compiled_Apis return Rtmidi_Api_Array;
 
+   function Get_Version return String;
+
    --  procedure error (The_Type : Error_Type;
    --                   Msg      : String);
 
