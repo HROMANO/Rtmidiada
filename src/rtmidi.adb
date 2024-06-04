@@ -122,9 +122,7 @@ package body Rtmidi is
    end Get_Port_Name;
 
    ----------------------------------------------------------------------------
-   function Get_Compiled_apis return Rtmidi_Api_Array is
-
-      --  TODO: quite ugly.
+   function Get_Compiled_Apis return Rtmidi_Api_Array is
 
       use type IC.int;
 
@@ -134,43 +132,33 @@ package body Rtmidi is
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
-      function Internal_Get_Num
+      function Internal_Get_Number
         (Apis : ICS.chars_ptr; Apis_Size : IC.unsigned) return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
-      Size : IC.unsigned := 0;
-      Ret  : IC.int      := 0;
+      Number  : IC.int      := 0;
 
    begin
-      Ret := Internal_Get_Num (ICS.Null_Ptr, 0);
+      Number := Internal_Get_Number (ICS.Null_Ptr, 0);
 
-      if Ret <= 0 then
-         declare
-            Result : Rtmidi_Api_Array (1 .. 0);
-         begin
-            return Result;
-         end;
-      else
-         Size := IC.unsigned (Ret);
+      if Number <= 0 then
+         return Empty_Rtmidi_Api_Array;
       end if;
 
       declare
+         Size   : IC.unsigned := Interfaces.C.unsigned (Number);
          Result : Rtmidi_Api_Array (1 .. Integer (Size));
       begin
-         Ret := Internal_Get (Result, Size);
-         if Ret <= 0 then
-            declare
-               Result : Rtmidi_Api_Array (1 .. 0);
-            begin
-               return Result;
-            end;
+         Number := Internal_Get (Result, Size);
+         if Number <= 0 then
+            return Empty_Rtmidi_Api_Array;
          else
             return Result;
          end if;
       end;
 
-   end Get_Compiled_apis;
+   end Get_Compiled_Apis;
 
    ----------------------------------------------------------------------------
    function Get_Version return String is

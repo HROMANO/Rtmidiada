@@ -74,4 +74,6 @@ private
 
    function To_Hex (Value : Natural; Pad : Boolean := True) return String;
 
+   Empty_Rtmidi_Api_Array : Rtmidi_Api_Array (1 .. 0);
+
 end Rtmidi;
