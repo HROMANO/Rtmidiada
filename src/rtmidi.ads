@@ -57,11 +57,11 @@ private
    function Error_Message (Device : RtMidiPtr) return String;
 
    procedure Open_Port
-     (Device : in out RtMidiPtr; Number : Natural; Name : String);
+     (Device : RtMidiPtr; Number : Natural; Name : String);
 
-   procedure Open_Virtual_Port (Device : in out RtMidiPtr; Name : String);
+   procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String);
 
-   procedure Close_Port (Device : in out RtMidiPtr);
+   procedure Close_Port (Device : RtMidiPtr);
 
    function Get_Port_Count (Device : RtMidiPtr) return Natural;
 

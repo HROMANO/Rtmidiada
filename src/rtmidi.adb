@@ -1,7 +1,5 @@
 private with Ada.Strings.Unbounded;
 
-private with Interfaces.C.Strings;
-
 package body Rtmidi is
 
    package IC renames Interfaces.C;
@@ -41,7 +39,7 @@ package body Rtmidi is
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (Device : in out RtMidiPtr; Number : Natural; Name : String)
+     (Device : RtMidiPtr; Number : Natural; Name : String)
    is
 
       procedure Internal
@@ -55,10 +53,10 @@ package body Rtmidi is
    end Open_Port;
 
    ----------------------------------------------------------------------------
-   procedure Open_Virtual_Port (Device : in out RtMidiPtr; Name : String) is
+   procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String) is
 
       procedure Internal
-        (Device : in out RtMidiPtr; Port_Name : ICS.chars_ptr) with
+        (Device : RtMidiPtr; Port_Name : ICS.chars_ptr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
@@ -67,7 +65,7 @@ package body Rtmidi is
    end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure Close_Port (Device : in out RtMidiPtr) is
+   procedure Close_Port (Device : RtMidiPtr) is
 
       procedure Internal (Device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_close_port";
@@ -150,7 +148,7 @@ package body Rtmidi is
       end if;
 
       declare
-         Size   : IC.unsigned := Interfaces.C.unsigned (Number);
+         Size   : constant IC.unsigned := Interfaces.C.unsigned (Number);
          Result : Rtmidi_Api_Array (1 .. Integer (Size));
       begin
          Number := Internal_Get (Result, Size);
@@ -214,7 +212,7 @@ package body Rtmidi is
 
       for Index in 1 .. Positive (Length) loop
          --  Msg index starts at 0 and not 1, so 'i - 1'
-         Result (I) :=
+         Result (Index) :=
            Byte (Character'Pos (IC.To_Ada (Msg (IC.size_t (Index - 1)))));
       end loop;
 
@@ -235,7 +233,7 @@ package body Rtmidi is
    begin
 
       if Value = 0 then
-         return (if Pad = True then "00" else "0");
+         return (if Pad then "00" else "0");
       end if;
 
       Temp2 := Value;
