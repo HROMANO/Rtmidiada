@@ -35,14 +35,15 @@ package Rtmidi.Midi_In is
    generic
       type User_Data_Type is private;
    package Callback_Factory is
-      type User_Data_Access is access all User_Data_Type;
+
       type Callback_Type is
-        access procedure
-          (Delta_Time : Float; Msg : Message;
-           User_Data  : access User_Data_Type);
+        access procedure (Delta_Time : Float; Msg : Message;
+                          User_Data  : access User_Data_Type);
+
       procedure Set_Callback
-        (Self      : in out Midi_In; Callback : Callback_Type;
-         User_Data :        access User_Data_Type);
+        (Self      : Midi_In; Callback : Callback_Type;
+         User_Data : access User_Data_Type);
+
    end Callback_Factory;
 
    function Get_Message
@@ -59,7 +60,7 @@ package Rtmidi.Midi_In is
 private
 
    type Midi_In is new Ada.Finalization.Limited_Controlled with record
-      Device : RtMidiPtr := null;
+      Device   : RtMidiPtr := null;
    end record;
 
    procedure Free (Self : in out Midi_In);

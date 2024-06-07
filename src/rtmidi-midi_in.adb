@@ -1,10 +1,9 @@
 private with Ada.Text_IO;
-private with Ada.Unchecked_Conversion;
 
 private with Interfaces.C;
 private with Interfaces.C.Strings;
 
-with System;
+private with System;
 
 package body Rtmidi.Midi_In is
 
@@ -139,42 +138,45 @@ package body Rtmidi.Midi_In is
    package body Callback_Factory is
 
       procedure Set_Callback
-        (Self      : in out Midi_In; Callback : Callback_Type;
-         User_Data :        access User_Data_Type)
+        (Self      : Midi_In; Callback : Callback_Type;
+         User_Data : access User_Data_Type)
       is
 
-         type Proxy is
-           access procedure
-             (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-              User_Data  : access User_Data_Type) with
-           Convention => C;
+         type Infos_Record is record
+            Real_User_Data : access User_Data_Type;
+            Real_Callback  : Callback_Type;
+         end record;
+
+         type Infos_Record_Access is access all Infos_Record;
 
          procedure Internal
-           (Device    : RtMidiPtr; Callback : Proxy;
-            User_Data : System.Address) with
+           (Device    : RtMidiPtr; Callback : System.Address;
+            Infos     : Infos_Record_Access) with
            Import        => True, Convention => C,
            External_Name => "rtmidi_in_set_callback";
 
-         function Convert_User_Data is new Ada.Unchecked_Conversion
-           (User_Data_Access, System.Address);
-
          procedure Wrapper
            (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-            User_Data  : access User_Data_Type) with
+            Infos      : Infos_Record_Access) with
            Convention => C;
 
          procedure Wrapper
            (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-            User_Data  : access User_Data_Type)
+            Infos      : Infos_Record_Access)
          is
          begin
-            Callback (Float (Delta_Time), To_Message (Buffer, Len), User_Data);
+            Infos.Real_Callback
+              (Float (Delta_Time), To_Message (Buffer, Len), Infos.Real_User_Data);
          end Wrapper;
 
+         Callback_Infos : Infos_Record_Access := new Infos_Record;
+         --  Probable memory leak
       begin
+         Callback_Infos.Real_Callback := Callback;
+         Callback_Infos.Real_User_Data := User_Data;
          Internal
-           (Device    => Self.Device, Callback => Wrapper'Access,
-            User_Data => Convert_User_Data (User_Data_Access (User_Data)));
+           (Device => Self.Device, Callback => Wrapper'Address,
+            Infos  => Callback_Infos);
       end Set_Callback;
    end Callback_Factory;
 
@@ -231,8 +233,7 @@ package body Rtmidi.Midi_In is
    end Put_Message;
 
    ----------------------------------------------------------------------------
-   function Valid (Self : Midi_In) return Boolean is
-     (Valid (Self.Device));
+   function Valid (Self : Midi_In) return Boolean is (Valid (Self.Device));
 
    ----------------------------------------------------------------------------
    function Error_Message (Self : Midi_In) return String is

@@ -17,6 +17,7 @@ procedure Examples is
 
    package cb_int is new Rtmidi.Midi_In.Callback_Factory
      (User_Data_Type => Integer);
+
    package cb_str is new Rtmidi.Midi_In.Callback_Factory
      (User_Data_Type => Essai);
 
@@ -61,13 +62,13 @@ begin
       for j in 0 .. nb_ports (i) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (j) & ": " &
-            midi_in (i).Get_Port_Name (j));
+              midi_in (i).Get_Port_Name (j));
       end loop;
 
       midi_in (i).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-         Rtmidi.Api_Display_Name (midi_in (i).Get_Current_Api));
+           Rtmidi.Api_Display_Name (midi_in (i).Get_Current_Api));
       Put_Line ("Valid: " & midi_in (i).Valid'Image);
       Put_Line ("Error message: " & midi_in (i).Error_Message);
       midi_in (i).Close_Port;
@@ -79,13 +80,13 @@ begin
       for j in 0 .. nb_ports (i) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (j) & ": " &
-            midi_out (i).Get_Port_Name (j));
+              midi_out (i).Get_Port_Name (j));
       end loop;
 
       midi_out (i).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-         Rtmidi.Api_Display_Name (midi_out (i).Get_Current_Api));
+           Rtmidi.Api_Display_Name (midi_out (i).Get_Current_Api));
       Put_Line ("Valid: " & midi_out (i).Valid'Image);
       Put_Line ("Error message: " & midi_out (i).Error_Message);
       midi_out (i).Close_Port;
