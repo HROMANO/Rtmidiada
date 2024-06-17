@@ -137,21 +137,23 @@ package body Rtmidi.Midi_In is
    ----------------------------------------------------------------------------
    package body Callback_Factory is
 
+      type Infos_Record is record
+         Real_User_Data : access User_Data_Type;
+         Real_Callback  : Callback_Type;
+      end record;
+
+      type Infos_Record_Access is access all Infos_Record;
+
+      Infos          : aliased Infos_Record;
+
       procedure Set_Callback
         (Self      : Midi_In; Callback : Callback_Type;
          User_Data : access User_Data_Type)
       is
 
-         type Infos_Record is record
-            Real_User_Data : access User_Data_Type;
-            Real_Callback  : Callback_Type;
-         end record;
-
-         type Infos_Record_Access is access all Infos_Record;
-
          procedure Internal
-           (Device    : RtMidiPtr; Callback : System.Address;
-            Infos     : Infos_Record_Access) with
+           (Device : RtMidiPtr; Callback : System.Address;
+            Infos  : Infos_Record_Access) with
            Import        => True, Convention => C,
            External_Name => "rtmidi_in_set_callback";
 
@@ -166,18 +168,18 @@ package body Rtmidi.Midi_In is
          is
          begin
             Infos.Real_Callback
-              (Float (Delta_Time), To_Message (Buffer, Len), Infos.Real_User_Data);
+              (Float (Delta_Time), To_Message (Buffer, Len),
+               Infos.Real_User_Data);
          end Wrapper;
 
-         Callback_Infos : Infos_Record_Access := new Infos_Record;
-         --  Probable memory leak
       begin
-         Callback_Infos.Real_Callback := Callback;
-         Callback_Infos.Real_User_Data := User_Data;
+         Infos.Real_Callback  := Callback;
+         Infos.Real_User_Data := User_Data;
          Internal
            (Device => Self.Device, Callback => Wrapper'Address,
-            Infos  => Callback_Infos);
+            Infos  => Infos'Access);
       end Set_Callback;
+
    end Callback_Factory;
 
    ----------------------------------------------------------------------------
