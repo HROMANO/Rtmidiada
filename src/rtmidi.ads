@@ -52,7 +52,7 @@ private
 
    type RtMidiPtr is access all RtMidi;
 
-   function Valid (Device : RtMidiPtr) return Boolean;
+   function Success (Device : RtMidiPtr) return Boolean;
 
    function Error_Message (Device : RtMidiPtr) return String;
 

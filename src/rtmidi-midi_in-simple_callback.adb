@@ -15,7 +15,9 @@ package body Rtmidi.Midi_In.Simple_Callback is
 
    Infos : aliased Infos_Record;
 
-   procedure Set_Callback (Self : in out Midi_In; Callback : Callback_Type) is
+   procedure Set_Callback
+     (Self : in out Midi_In'Class; Callback : Callback_Type)
+   is
 
       procedure Internal
         (Device : RtMidiPtr; Callback : System.Address;

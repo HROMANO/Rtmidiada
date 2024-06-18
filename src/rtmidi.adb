@@ -38,9 +38,7 @@ package body Rtmidi is
    end Compiled_Api_By_Name;
 
    ----------------------------------------------------------------------------
-   procedure Open_Port
-     (Device : RtMidiPtr; Number : Natural; Name : String)
-   is
+   procedure Open_Port (Device : RtMidiPtr; Number : Natural; Name : String) is
 
       procedure Internal
         (Device      : RtMidiPtr;
@@ -55,8 +53,7 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String) is
 
-      procedure Internal
-        (Device : RtMidiPtr; Port_Name : ICS.chars_ptr) with
+      procedure Internal (Device : RtMidiPtr; Port_Name : ICS.chars_ptr) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
@@ -171,10 +168,10 @@ package body Rtmidi is
    end Get_Version;
 
    ----------------------------------------------------------------------------
-   function Valid (Device : RtMidiPtr) return Boolean is
+   function Success (Device : RtMidiPtr) return Boolean is
    begin
       return Device.Ok;
-   end Valid;
+   end Success;
 
    ----------------------------------------------------------------------------
    function Error_Message (Device : RtMidiPtr) return String is

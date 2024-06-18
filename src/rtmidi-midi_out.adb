@@ -8,7 +8,7 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (Self : in out Midi_Out; Number : Natural := 0;
+     (Self : in out Midi_Out'Class; Number : Natural := 0;
       Name :        String := "RtMidi Output")
    is
    begin
@@ -17,30 +17,31 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port
-     (Self : in out Midi_Out; Name : String := "RtMidi Output")
+     (Self : in out Midi_Out'Class; Name : String := "RtMidi Output")
    is
    begin
       Open_Virtual_Port (Self.Device, Name);
    end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
-   procedure Close_Port (Self : in out Midi_Out) is
+   procedure Close_Port (Self : in out Midi_Out'Class) is
    begin
       Close_Port (Self.Device);
    end Close_Port;
 
    ----------------------------------------------------------------------------
-   function Get_Port_Count (Self : Midi_Out) return Natural is
+   function Get_Port_Count (Self : Midi_Out'Class) return Natural is
    begin
       return Get_Port_Count (Self.Device);
    end Get_Port_Count;
 
    ----------------------------------------------------------------------------
-   function Get_Port_Name (Self : Midi_Out; Number : Natural) return String is
+   function Get_Port_Name
+     (Self : Midi_Out'Class; Number : Natural) return String is
      (Get_Port_Name (Self.Device, Number));
 
    ----------------------------------------------------------------------------
-   procedure Create (Self : in out Midi_Out) is
+   procedure Create (Self : in out Midi_Out'Class) is
 
       function Internal return RtMidiPtr with
         Import        => True, Convention => C,
@@ -57,7 +58,7 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    procedure Create
-     (Self        : in out Midi_Out; Api : Rtmidi_Api := Unspecified;
+     (Self        : in out Midi_Out'Class; Api : Rtmidi_Api := Unspecified;
       Client_Name :        String := "RtMidi Output Client")
    is
 
@@ -75,7 +76,7 @@ package body Rtmidi.Midi_Out is
    end Create;
 
    ----------------------------------------------------------------------------
-   procedure Free (Self : in out Midi_Out) is
+   procedure Free (Self : in out Midi_Out'Class) is
 
       procedure Internal (Device : RtMidiPtr) with
         Import => True, Convention => C, External_Name => "rtmidi_out_free";
@@ -86,7 +87,7 @@ package body Rtmidi.Midi_Out is
    end Free;
 
    ----------------------------------------------------------------------------
-   function Get_Current_Api (Self : Midi_Out) return Rtmidi_Api is
+   function Get_Current_Api (Self : Midi_Out'Class) return Rtmidi_Api is
 
       function Internal (Device : RtMidiPtr) return Rtmidi_Api with
         Import        => True, Convention => C,
@@ -98,7 +99,7 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    function Send_Message
-     (Self : in out Midi_Out; Message : String) return Integer
+     (Self : in out Midi_Out'Class; Message : String) return Integer
    is
 
       function Internal
@@ -114,12 +115,24 @@ package body Rtmidi.Midi_Out is
    end Send_Message;
 
    ----------------------------------------------------------------------------
-   function Valid (Self : Midi_Out) return Boolean is
-     (Valid (Self.Device));
+   function Success (Self : Midi_Out'Class) return Boolean is
+     (Success (Self.Device));
 
    ----------------------------------------------------------------------------
-   function Error_Message (Self : Midi_Out) return String is
+   function Error_Message (Self : Midi_Out'Class) return String is
      (Error_Message (Self.Device));
+
+   ----------------------------------------------------------------------------
+   function Valid (Self : Midi_Out'Class) return Boolean is
+     (Self.Device /= null);
+
+   ----------------------------------------------------------------------------
+   overriding procedure Finalize (Self : in out Midi_Out) is
+   begin
+      if Self.Valid then
+         Self.Free;
+      end if;
+   end Finalize;
 
    ----------------------------------------------------------------------------
 end Rtmidi.Midi_Out;

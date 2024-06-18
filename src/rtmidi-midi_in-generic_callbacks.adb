@@ -16,7 +16,7 @@ package body Rtmidi.Midi_In.Generic_Callbacks is
    Infos : aliased Infos_Record;
 
    procedure Set_Callback
-     (Self      : in out Midi_In; Callback : Callback_Type;
+     (Self      : in out Midi_In'Class; Callback : Callback_Type;
       User_Data :        access User_Data_Type)
    is
 
