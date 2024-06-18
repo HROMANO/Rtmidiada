@@ -3,8 +3,6 @@ private with Ada.Text_IO;
 private with Interfaces.C;
 private with Interfaces.C.Strings;
 
-private with System;
-
 package body Rtmidi.Midi_In is
 
    package IC renames Interfaces.C;
@@ -81,6 +79,7 @@ package body Rtmidi.Midi_In is
       Self.Device :=
         Internal
           (Api, ICS.New_String (Client_Name), IC.unsigned (Queue_Size_Limit));
+
    end Create;
 
    ----------------------------------------------------------------------------
@@ -132,55 +131,8 @@ package body Rtmidi.Midi_In is
 
    begin
       Internal (Self.Device);
+      Self.Callback_Is_Set := False;
    end Cancel_Callback;
-
-   ----------------------------------------------------------------------------
-   package body Callback_Factory is
-
-      type Infos_Record is record
-         Real_User_Data : access User_Data_Type;
-         Real_Callback  : Callback_Type;
-      end record;
-
-      type Infos_Record_Access is access all Infos_Record;
-
-      Infos          : aliased Infos_Record;
-
-      procedure Set_Callback
-        (Self      : Midi_In; Callback : Callback_Type;
-         User_Data : access User_Data_Type)
-      is
-
-         procedure Internal
-           (Device : RtMidiPtr; Callback : System.Address;
-            Infos  : Infos_Record_Access) with
-           Import        => True, Convention => C,
-           External_Name => "rtmidi_in_set_callback";
-
-         procedure Wrapper
-           (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-            Infos      : Infos_Record_Access) with
-           Convention => C;
-
-         procedure Wrapper
-           (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-            Infos      : Infos_Record_Access)
-         is
-         begin
-            Infos.Real_Callback
-              (Float (Delta_Time), To_Message (Buffer, Len),
-               Infos.Real_User_Data);
-         end Wrapper;
-
-      begin
-         Infos.Real_Callback  := Callback;
-         Infos.Real_User_Data := User_Data;
-         Internal
-           (Device => Self.Device, Callback => Wrapper'Address,
-            Infos  => Infos'Access);
-      end Set_Callback;
-
-   end Callback_Factory;
 
    ----------------------------------------------------------------------------
    function Get_Message (Self : Midi_In; Delta_Time : out Float) return Message
@@ -240,6 +192,10 @@ package body Rtmidi.Midi_In is
    ----------------------------------------------------------------------------
    function Error_Message (Self : Midi_In) return String is
      (Error_Message (Self.Device));
+
+   ----------------------------------------------------------------------------
+   function Callback_Already_Set (Self : Midi_In) return Boolean is
+     (Self.Callback_Is_Set);
 
    ----------------------------------------------------------------------------
    overriding procedure Finalize (Self : in out Midi_In) is

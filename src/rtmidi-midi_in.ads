@@ -30,22 +30,9 @@ package Rtmidi.Midi_In is
      (Self      : in out Midi_In; Midi_Sysex : Boolean := True;
       Midi_Time :        Boolean := True; Midi_Sense : Boolean := True);
 
-   procedure Cancel_Callback (Self : in out Midi_In);
-
-   generic
-      type User_Data_Type is private;
-   package Callback_Factory is
-
-      type Callback_Type is
-        access procedure
-          (Delta_Time : Float; Msg : Message;
-           User_Data  : access User_Data_Type);
-
-      procedure Set_Callback
-        (Self      : Midi_In; Callback : Callback_Type;
-         User_Data : access User_Data_Type);
-
-   end Callback_Factory;
+   procedure Cancel_Callback (Self : in out Midi_In) with
+     Pre  => Self.Callback_Already_Set = True,
+     Post => Self.Callback_Already_Set = False;
 
    function Get_Message
      (Self : Midi_In; Delta_Time : out Float) return Message;
@@ -58,10 +45,13 @@ package Rtmidi.Midi_In is
 
    function Error_Message (Self : Midi_In) return String;
 
+   function Callback_Already_Set (Self : Midi_In) return Boolean;
+
 private
 
    type Midi_In is new Ada.Finalization.Limited_Controlled with record
-      Device : RtMidiPtr := null;
+      Device          : RtMidiPtr := null;
+      Callback_Is_Set : Boolean   := False;
    end record;
 
    procedure Free (Self : in out Midi_In);

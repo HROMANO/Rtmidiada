@@ -4,7 +4,11 @@ with Ada.Text_IO; use Ada.Text_IO;
 
 with Rtmidi;
 with Rtmidi.Midi_In;
+with Rtmidi.Midi_In.Generic_Callbacks;
+with Rtmidi.Midi_In.Simple_Callback;
 with Rtmidi.Midi_Out;
+
+with Callback;
 
 procedure Examples is
 
@@ -15,10 +19,10 @@ procedure Examples is
 
    type Essai is new String (1 .. 10);
 
-   package cb_int is new Rtmidi.Midi_In.Callback_Factory
+   package cb_int is new Rtmidi.Midi_In.Generic_Callbacks
      (User_Data_Type => Integer);
 
-   package cb_str is new Rtmidi.Midi_In.Callback_Factory
+   package cb_str is new Rtmidi.Midi_In.Generic_Callbacks
      (User_Data_Type => Essai);
 
    procedure cb0
@@ -48,13 +52,19 @@ procedure Examples is
 
 begin
 
+   New_Line;
+   Put_Line ("--------");
+   New_Line;
    Put_Line ("RtMidi version: " & Rtmidi.Get_Version);
+   New_Line;
 
    for i in apis'Range loop
 
+      Put_Line ("--------");
+      New_Line;
       Put_Line ("API name: " & Rtmidi.Api_Name (apis (i)));
       Put_Line ("API display name: " & Rtmidi.Api_Display_Name (apis (i)));
-      Put_Line ("-----------");
+      New_Line;
 
       Rtmidi.Midi_In.Create (midi_in (i), apis (i));
       nb_ports (i) := midi_in (i).Get_Port_Count;
@@ -62,17 +72,17 @@ begin
       for j in 0 .. nb_ports (i) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (j) & ": " &
-              midi_in (i).Get_Port_Name (j));
+            midi_in (i).Get_Port_Name (j));
       end loop;
 
       midi_in (i).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-           Rtmidi.Api_Display_Name (midi_in (i).Get_Current_Api));
+         Rtmidi.Api_Display_Name (midi_in (i).Get_Current_Api));
       Put_Line ("Valid: " & midi_in (i).Valid'Image);
       Put_Line ("Error message: " & midi_in (i).Error_Message);
       midi_in (i).Close_Port;
-      Put_Line ("-----------");
+      New_Line;
 
       Rtmidi.Midi_Out.Create (midi_out (i), apis (i));
       nb_ports (i) := midi_out (i).Get_Port_Count;
@@ -80,35 +90,53 @@ begin
       for j in 0 .. nb_ports (i) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (j) & ": " &
-              midi_out (i).Get_Port_Name (j));
+            midi_out (i).Get_Port_Name (j));
       end loop;
 
       midi_out (i).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-           Rtmidi.Api_Display_Name (midi_out (i).Get_Current_Api));
+         Rtmidi.Api_Display_Name (midi_out (i).Get_Current_Api));
       Put_Line ("Valid: " & midi_out (i).Valid'Image);
       Put_Line ("Error message: " & midi_out (i).Error_Message);
       midi_out (i).Close_Port;
-      Put_Line ("-----------");
 
       New_Line;
 
    end loop;
 
+   Put_Line ("--------");
+   New_Line;
    Rtmidi.Midi_In.Create (midi_in (1), Rtmidi.Linux_Alsa);
    midi_in (1).Open_Port (1, "First");
    midi_in (1).Ignore_Types (False, False, False);
    Put_Line ("Waiting for messages...");
+
+   --  Simple callback with no user data
+   --  Must be in a separate package (library level)
+   New_Line;
+   Put_Line ("No user data");
+   Rtmidi.Midi_In.Simple_Callback.Set_Callback
+     (midi_in (1), Callback.cb'Access);
+   delay 5.0;
+   midi_in (1).Cancel_Callback;
+
+   --  Callback with Integer user data
+   New_Line;
    Put_Line ("User data is Integer");
    cb_int.Set_Callback (midi_in (1), cb0'Access, u'Access);
    delay 5.0;
-
    midi_in (1).Cancel_Callback;
-   Put_Line ("User data is String(1..10)");
+
+   --  Callback with String (1..10) user data
+   New_Line;
+   Put_Line ("User data is String (1..10)");
    cb_str.Set_Callback (midi_in (1), cb1'Access, v'Access);
    delay 5.0;
+   midi_in (1).Cancel_Callback;
 
+   --  Midi output
+   New_Line;
    Put_Line ("Some MIDI Out");
    Rtmidi.Midi_Out.Create (midi_out (1), Rtmidi.Linux_Alsa);
    midi_out (1).Open_Port (1, "First");
@@ -118,10 +146,10 @@ begin
    pragma Unused (ret);
    delay 1.0;
 
-   midi_in (1).Cancel_Callback;
-   Put_Line ("Switching to non callback.");
-   loop
-      midi_in (1).Put_Message;
-   end loop;
+   --  Midi in without callback
+   --  Put_Line ("Switching to non callback.");
+   --  loop
+   --     midi_in (1).Put_Message;
+   --  end loop;
 
 end Examples;
