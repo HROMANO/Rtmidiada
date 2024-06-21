@@ -12,7 +12,8 @@ with Callback;
 
 procedure Examples is
 
-   Apis : constant Rtmidi.Rtmidi_Api_Array := Rtmidi.Get_Compiled_Apis;
+   Apis            : constant Rtmidi.Rtmidi_Api_Array :=
+                       Rtmidi.Get_Compiled_Apis;
    Midi_In_Array   : array (Apis'Range) of Rtmidi.Midi_In.Midi_In;
    Midi_Out_Array  : array (Apis'Range) of Rtmidi.Midi_Out.Midi_Out;
    Number_Of_Ports : array (Apis'Range) of Natural    := [others => 0];
@@ -47,10 +48,9 @@ procedure Examples is
       Put_Line (" - User data = " & String (User_Data.all));
    end Callback_String_10;
 
-   The_Integer   : aliased Integer   := 0;
-   The_String_10 : aliased String_10 := "abc       ";
-   Message       : String            := "00";
-   Result        : Integer           := 0;
+   The_Integer   : aliased Integer         := 0;
+   The_String_10 : aliased String_10       := "abc       ";
+   Msg           : constant Rtmidi.Message := [16#C0#, 16#10#];
 
 begin
 
@@ -75,13 +75,13 @@ begin
       for Port_In in 0 .. Number_Of_Ports (Api) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (Port_In) & ": " &
-            Midi_In_Array (Api).Get_Port_Name (Port_In));
+              Midi_In_Array (Api).Get_Port_Name (Port_In));
       end loop;
 
       Midi_In_Array (Api).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-         Rtmidi.Api_Display_Name (Midi_In_Array (Api).Get_Current_Api));
+           Rtmidi.Api_Display_Name (Midi_In_Array (Api).Get_Current_Api));
 
       if Midi_In_Array (Api).Success then
          Put_Line ("Success");
@@ -100,13 +100,13 @@ begin
       for Port_Out in 0 .. Number_Of_Ports (Api) - 1 loop
          Put_Line
            ("Port name" & Natural'Image (Port_Out) & ": " &
-            Midi_Out_Array (Api).Get_Port_Name (Port_Out));
+              Midi_Out_Array (Api).Get_Port_Name (Port_Out));
       end loop;
 
       Midi_Out_Array (Api).Open_Port (0, "First");
       Put_Line
         ("Current API: " &
-         Rtmidi.Api_Display_Name (Midi_Out_Array (Api).Get_Current_Api));
+           Rtmidi.Api_Display_Name (Midi_Out_Array (Api).Get_Current_Api));
 
       if Midi_Out_Array (Api).Success then
          Put_Line ("Success");
@@ -158,10 +158,7 @@ begin
    Put_Line ("Some MIDI Out");
    Rtmidi.Midi_Out.Create (Midi_Out_Array (1), Rtmidi.Linux_Alsa);
    Midi_Out_Array (1).Open_Port (1, "First");
-   Message (1) := Character'Val (16#C0#);
-   Message (2) := Character'Val (16#11#);
-   Result      := Midi_Out_Array (1).Send_Message (Message);
-   pragma Unused (Result);
+   Midi_Out_Array (1).Send_Message (Msg);
    delay 1.0;
 
    --  Midi in without callback
@@ -170,4 +167,6 @@ begin
    --     Midi_In_Array (1).Put_Message;
    --  end loop;
 
+   Midi_In_Array (1).Close_Port;
+   Midi_Out_Array (1).Close_Port;
 end Examples;

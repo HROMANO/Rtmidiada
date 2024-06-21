@@ -98,20 +98,19 @@ package body Rtmidi.Midi_Out is
    end Get_Current_Api;
 
    ----------------------------------------------------------------------------
-   function Send_Message
-     (Self : in out Midi_Out'Class; Message : String) return Integer
+   procedure Send_Message
+     (Self : in out Midi_Out'Class; Msg : Message)
    is
 
       function Internal
-        (device : RtMidiPtr; Message : IC.char_array; length : IC.int)
+        (device : RtMidiPtr; Msg : Message; length : IC.int)
          return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_out_send_message";
 
+      Result : IC.int;
    begin
-      return
-        Integer
-          (Internal (Self.Device, IC.To_C (Message, False), Message'Length));
+      Result := Internal (Self.Device, Msg, Msg'Length);
    end Send_Message;
 
    ----------------------------------------------------------------------------

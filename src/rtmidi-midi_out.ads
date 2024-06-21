@@ -32,8 +32,8 @@ package Rtmidi.Midi_Out is
    function Get_Current_Api (Self : Midi_Out'Class) return Rtmidi_Api with
      Pre => Self.Valid;
 
-   function Send_Message
-     (Self : in out Midi_Out'Class; Message : String) return Integer with
+   procedure Send_Message
+     (Self : in out Midi_Out'Class; Msg : Message) with
      Pre => Self.Valid;
 
    function Success (Self : Midi_Out'Class) return Boolean with
