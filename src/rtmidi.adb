@@ -29,12 +29,12 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Compiled_Api_By_Name (Name : String) return Rtmidi_Api is
 
-      function Internal (Name : ICS.chars_ptr) return Rtmidi_Api with
+      function Internal (Name : IC.char_array) return Rtmidi_Api with
         Import        => True, Convention => C,
         External_Name => "rtmidi_compiled_api_by_name";
 
    begin
-      return Internal (ICS.New_String (Name));
+      return Internal (IC.To_C (Name, True));
    end Compiled_Api_By_Name;
 
    ----------------------------------------------------------------------------
@@ -43,22 +43,22 @@ package body Rtmidi is
       procedure Internal
         (Device      : RtMidiPtr;
          Port_Number : IC.unsigned; -- if 0, the first available.
-         Port_Name   : ICS.chars_ptr) with
+         Port_Name   : IC.char_array) with
         Import => True, Convention => C, External_Name => "rtmidi_open_port";
 
    begin
-      Internal (Device, IC.unsigned (Number), ICS.New_String (Name));
+      Internal (Device, IC.unsigned (Number), IC.To_C (Name));
    end Open_Port;
 
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String) is
 
-      procedure Internal (Device : RtMidiPtr; Port_Name : ICS.chars_ptr) with
+      procedure Internal (Device : RtMidiPtr; Port_Name : IC.char_array) with
         Import        => True, Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
    begin
-      Internal (Device, ICS.New_String (Name));
+      Internal (Device, IC.To_C (Name));
    end Open_Virtual_Port;
 
    ----------------------------------------------------------------------------
@@ -89,33 +89,45 @@ package body Rtmidi is
 
       use type IC.int;
 
-      function Internal
-        (Device  : RtMidiPtr; Port_Number : IC.unsigned;
-         Buf_Out : ICS.chars_ptr; Buf_Len : out IC.int) return IC.int with
+      function Internal_Get_Length
+        (Device  :     RtMidiPtr; Port_Number : IC.unsigned; Buf_Out : IC.char;
+         Buf_Len : out IC.int) return IC.int with
+        Import        => True, Convention => C,
+        External_Name => "rtmidi_get_port_name";
+
+      function Internal_Get_Name
+        (Device  :     RtMidiPtr; Port_Number : IC.unsigned;
+         Buf_Out : out IC.char_array; Buf_Len : out IC.int) return IC.int with
         Import        => True, Convention => C,
         External_Name => "rtmidi_get_port_name";
 
       Result        : IC.int := 0;
       Buffer_Length : IC.int := 0;
-      Name          : ICS.chars_ptr;
    begin
       --  Get needed length of the buffer
       Result :=
-        Internal (Device, IC.unsigned (Number), ICS.Null_Ptr, Buffer_Length);
+        Internal_Get_Length
+          (Device, IC.unsigned (Number), IC.nul, Buffer_Length);
 
       if Result < 0 then
          return "";
       end if;
 
       --  Get the name
-      Name   := ICS.New_String ((1 .. Integer (Buffer_Length) => ' '));
-      Result := Internal (Device, IC.unsigned (Number), Name, Buffer_Length);
+      declare
+         Name : IC.char_array (1 .. IC.size_t (Buffer_Length));
+      begin
 
-      if Result <= 0 then
-         return "";
-      end if;
+         Result :=
+           Internal_Get_Name
+             (Device, IC.unsigned (Number), Name, Buffer_Length);
 
-      return ICS.Value (Name, IC.size_t (Result));
+         if Result <= 0 then
+            return "";
+         end if;
+
+         return IC.To_Ada (Name, True);
+      end;
 
    end Get_Port_Name;
 
@@ -124,7 +136,7 @@ package body Rtmidi is
 
       use type IC.int;
 
-      function Internal_Get
+      function Internal_Get_Apis
         (Apis : in out Rtmidi_Api_Array; Apis_Size : IC.unsigned)
          return IC.int with
         Import        => True, Convention => C,
@@ -148,7 +160,7 @@ package body Rtmidi is
          Size   : constant IC.unsigned := Interfaces.C.unsigned (Number);
          Result : Rtmidi_Api_Array (1 .. Integer (Size));
       begin
-         Number := Internal_Get (Result, Size);
+         Number := Internal_Get_Apis (Result, Size);
          if Number <= 0 then
             return Empty_Rtmidi_Api_Array;
          else

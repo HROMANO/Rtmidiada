@@ -63,7 +63,7 @@ package body Rtmidi.Midi_Out is
    is
 
       function Internal
-        (Api : Rtmidi_Api; Client_Name : ICS.chars_ptr) return RtMidiPtr with
+        (Api : Rtmidi_Api; Client_Name : IC.char_array) return RtMidiPtr with
         Import => True, Convention => C, External_Name => "rtmidi_out_create";
 
    begin
@@ -71,7 +71,7 @@ package body Rtmidi.Midi_Out is
          Self.Free;
       end if;
 
-      Self.Device := Internal (Api, ICS.New_String (Client_Name));
+      Self.Device := Internal (Api, IC.To_C (Client_Name));
 
    end Create;
 

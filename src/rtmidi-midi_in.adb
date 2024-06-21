@@ -69,18 +69,17 @@ package body Rtmidi.Midi_In is
    is
 
       function Internal
-        (Api              : Rtmidi_Api; Client_Name : ICS.chars_ptr;
+        (Api              : Rtmidi_Api; Client_Name : IC.char_array;
          Queue_Size_Limit : IC.unsigned) return RtMidiPtr with
         Import => True, Convention => C, External_Name => "rtmidi_in_create";
 
+      Name : IC.char_array := IC.To_C (Client_Name, True);
    begin
       if Self.Device /= null then
          Self.Free;
       end if;
 
-      Self.Device :=
-        Internal
-          (Api, ICS.New_String (Client_Name), IC.unsigned (Queue_Size_Limit));
+      Self.Device := Internal (Api, Name, IC.unsigned (Queue_Size_Limit));
 
    end Create;
 
@@ -145,14 +144,14 @@ package body Rtmidi.Midi_In is
       use type Interfaces.C.double;
 
       function Internal
-        (Device : RtMidiPtr; Message : out IC.char_array; size : out IC.size_t)
+        (Device : RtMidiPtr; Msg : out Message; size : out IC.size_t)
          return IC.double with
         Import        => True, Convention => C,
         External_Name => "rtmidi_in_get_message";
 
       --  SYSEX messages maximum size is 1_024
       Buffer_Length : IC.size_t := 1_024;
-      Buffer        : IC.char_array (0 .. Buffer_Length - 1);
+      Buffer        : Message (1 .. Integer (Buffer_Length));
       Ret           : IC.double := 0.0;
       Empty         : Message (1 .. 0);
 
@@ -164,8 +163,7 @@ package body Rtmidi.Midi_In is
          return Empty;
       else
          Delta_Time := Float (Ret);
-         --  Buffer_Length has been updated to the real length
-         return To_Message (Buffer, Buffer_Length);
+         return Buffer;
       end if;
 
    end Get_Message;

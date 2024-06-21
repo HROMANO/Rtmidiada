@@ -13,7 +13,8 @@ package Rtmidi is
    type Byte is range 0 .. 255;
    for Byte'Size use 8;
 
-   type Message is array (Positive range <>) of Byte;
+   type Message is array (Positive range <>) of aliased Byte with
+     Pack, Convention => C;
 
    type Rtmidi_Api is
      (Unspecified, Macosx_Core, Linux_Alsa, Unix_Jack, Windows_Mm,
@@ -48,7 +49,8 @@ private
       Data          : System.Address;
       Ok            : Boolean;
       Error_Message : Interfaces.C.Strings.chars_ptr;
-   end record with Convention => C;
+   end record with
+     Convention => C;
 
    type RtMidiPtr is access all RtMidi;
 
@@ -56,8 +58,7 @@ private
 
    function Error_Message (Device : RtMidiPtr) return String;
 
-   procedure Open_Port
-     (Device : RtMidiPtr; Number : Natural; Name : String);
+   procedure Open_Port (Device : RtMidiPtr; Number : Natural; Name : String);
 
    procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String);
 
