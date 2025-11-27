@@ -8,17 +8,16 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (Self : in out Midi_Out'Class; Number : Natural := 0;
-      Name :        String := "RtMidi Output")
-   is
+     (Self   : in out Midi_Out'Class;
+      Number : Natural := 0;
+      Name   : String := "RtMidi Output") is
    begin
       Open_Port (Self.Device, Number, Name);
    end Open_Port;
 
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port
-     (Self : in out Midi_Out'Class; Name : String := "RtMidi Output")
-   is
+     (Self : in out Midi_Out'Class; Name : String := "RtMidi Output") is
    begin
       Open_Virtual_Port (Self.Device, Name);
    end Open_Virtual_Port;
@@ -37,14 +36,16 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    function Get_Port_Name
-     (Self : Midi_Out'Class; Number : Natural) return String is
-     (Get_Port_Name (Self.Device, Number));
+     (Self : Midi_Out'Class; Number : Natural) return String
+   is (Get_Port_Name (Self.Device, Number));
 
    ----------------------------------------------------------------------------
    procedure Create (Self : in out Midi_Out'Class) is
 
-      function Internal return RtMidiPtr with
-        Import        => True, Convention => C,
+      function Internal return RtMidiPtr
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_out_create_default";
 
    begin
@@ -58,13 +59,17 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    procedure Create
-     (Self        : in out Midi_Out'Class; Api : Rtmidi_Api := Unspecified;
-      Client_Name :        String := "RtMidi Output Client")
+     (Self        : in out Midi_Out'Class;
+      Api         : Rtmidi_Api := Unspecified;
+      Client_Name : String := "RtMidi Output Client")
    is
 
       function Internal
-        (Api : Rtmidi_Api; Client_Name : IC.char_array) return RtMidiPtr with
-        Import => True, Convention => C, External_Name => "rtmidi_out_create";
+        (Api : Rtmidi_Api; Client_Name : IC.char_array) return RtMidiPtr
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_out_create";
 
    begin
       if Self.Device /= null then
@@ -78,8 +83,8 @@ package body Rtmidi.Midi_Out is
    ----------------------------------------------------------------------------
    procedure Free (Self : in out Midi_Out'Class) is
 
-      procedure Internal (Device : RtMidiPtr) with
-        Import => True, Convention => C, External_Name => "rtmidi_out_free";
+      procedure Internal (Device : RtMidiPtr)
+      with Import => True, Convention => C, External_Name => "rtmidi_out_free";
 
    begin
       Internal (Self.Device);
@@ -89,8 +94,10 @@ package body Rtmidi.Midi_Out is
    ----------------------------------------------------------------------------
    function Get_Current_Api (Self : Midi_Out'Class) return Rtmidi_Api is
 
-      function Internal (Device : RtMidiPtr) return Rtmidi_Api with
-        Import        => True, Convention => C,
+      function Internal (Device : RtMidiPtr) return Rtmidi_Api
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_out_get_current_api";
 
    begin
@@ -98,14 +105,13 @@ package body Rtmidi.Midi_Out is
    end Get_Current_Api;
 
    ----------------------------------------------------------------------------
-   procedure Send_Message
-     (Self : in out Midi_Out'Class; Msg : Message)
-   is
+   procedure Send_Message (Self : in out Midi_Out'Class; Msg : Message) is
 
       function Internal
-        (device : RtMidiPtr; Msg : Message; length : IC.int)
-         return IC.int with
-        Import        => True, Convention => C,
+        (device : RtMidiPtr; Msg : Message; length : IC.int) return IC.int
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_out_send_message";
 
       Result : IC.int;
@@ -114,19 +120,20 @@ package body Rtmidi.Midi_Out is
    end Send_Message;
 
    ----------------------------------------------------------------------------
-   function Success (Self : Midi_Out'Class) return Boolean is
-     (Success (Self.Device));
+   function Success (Self : Midi_Out'Class) return Boolean
+   is (Success (Self.Device));
 
    ----------------------------------------------------------------------------
-   function Error_Message (Self : Midi_Out'Class) return String is
-     (Error_Message (Self.Device));
+   function Error_Message (Self : Midi_Out'Class) return String
+   is (Error_Message (Self.Device));
 
    ----------------------------------------------------------------------------
-   function Valid (Self : Midi_Out'Class) return Boolean is
-     (Self.Device /= null);
+   function Valid (Self : Midi_Out'Class) return Boolean
+   is (Self.Device /= null);
 
    ----------------------------------------------------------------------------
-   overriding procedure Finalize (Self : in out Midi_Out) is
+   overriding
+   procedure Finalize (Self : in out Midi_Out) is
    begin
       if Self.Valid then
          Self.Free;

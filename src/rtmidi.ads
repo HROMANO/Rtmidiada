@@ -13,22 +13,38 @@ package Rtmidi is
    type Byte is range 0 .. 255;
    for Byte'Size use 8;
 
-   type Message is array (Positive range <>) of aliased Byte with
-     Pack, Convention => C;
+   type Message is array (Positive range <>) of aliased Byte
+   with Pack, Convention => C;
 
    type Rtmidi_Api is
-     (Unspecified, Macosx_Core, Linux_Alsa, Unix_Jack, Windows_Mm,
-      Rtmidi_Dummy, Web_Midi_Api, Windows_Uwp, Android, Num) with
-     Convention => C;
+     (Unspecified,
+      Macosx_Core,
+      Linux_Alsa,
+      Unix_Jack,
+      Windows_Mm,
+      Rtmidi_Dummy,
+      Web_Midi_Api,
+      Windows_Uwp,
+      Android,
+      Num)
+   with Convention => C;
 
-   type Rtmidi_Api_Array is array (Positive range <>) of Rtmidi_Api with
-     Convention => C;
+   type Rtmidi_Api_Array is array (Positive range <>) of Rtmidi_Api
+   with Convention => C;
 
    type Error_Type is
-     (Warning, Debug_Warning, Unspecified, No_Devices_Found, Invalid_Device,
-      Memory_Error, Invalid_Parameter, Invalid_Use, Driver_Error, System_Error,
-      Thread_Error) with
-     Convention => C;
+     (Warning,
+      Debug_Warning,
+      Unspecified,
+      No_Devices_Found,
+      Invalid_Device,
+      Memory_Error,
+      Invalid_Parameter,
+      Invalid_Use,
+      Driver_Error,
+      System_Error,
+      Thread_Error)
+   with Convention => C;
 
    function Api_Name (Api : Rtmidi_Api) return String;
 
@@ -49,8 +65,8 @@ private
       Data          : System.Address;
       Ok            : Boolean;
       Error_Message : Interfaces.C.Strings.chars_ptr;
-   end record with
-     Convention => C;
+   end record
+   with Convention => C;
 
    type RtMidiPtr is access all RtMidi;
 

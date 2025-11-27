@@ -20,30 +20,37 @@ package body Rtmidi.Midi_In.Simple_Callback is
    is
 
       procedure Internal
-        (Device : RtMidiPtr; Callback : System.Address;
-         Infos  : Infos_Record_Access) with
-        Import        => True, Convention => C,
+        (Device   : RtMidiPtr;
+         Callback : System.Address;
+         Infos    : Infos_Record_Access)
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_set_callback";
 
       procedure Wrapper
-        (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-         Infos      : Infos_Record_Access) with
-        Convention => C;
+        (Delta_Time : IC.double;
+         Buffer     : IC.char_array;
+         Len        : IC.size_t;
+         Infos      : Infos_Record_Access)
+      with Convention => C;
 
       procedure Wrapper
-        (Delta_Time : IC.double; Buffer : IC.char_array; Len : IC.size_t;
-         Infos      : Infos_Record_Access)
-      is
+        (Delta_Time : IC.double;
+         Buffer     : IC.char_array;
+         Len        : IC.size_t;
+         Infos      : Infos_Record_Access) is
       begin
          Infos.Real_Callback (Float (Delta_Time), To_Message (Buffer, Len));
       end Wrapper;
 
    begin
-      Infos.Real_Callback  := Callback;
+      Infos.Real_Callback := Callback;
       Infos.Real_User_Data := No_User_Data'Access;
       Internal
-        (Device => Self.Device, Callback => Wrapper'Address,
-         Infos  => Infos'Access);
+        (Device   => Self.Device,
+         Callback => Wrapper'Address,
+         Infos    => Infos'Access);
       Self.Callback_Is_Set := True;
    end Set_Callback;
 

@@ -8,8 +8,8 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Api_Name (Api : Rtmidi_Api) return String is
 
-      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr with
-        Import => True, Convention => C, External_Name => "rtmidi_api_name";
+      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr
+      with Import => True, Convention => C, External_Name => "rtmidi_api_name";
 
    begin
       return ICS.Value (Internal (Api));
@@ -18,8 +18,10 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Api_Display_Name (Api : Rtmidi_Api) return String is
 
-      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr with
-        Import        => True, Convention => C,
+      function Internal (Api : Rtmidi_Api) return ICS.chars_ptr
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_api_display_name";
 
    begin
@@ -29,8 +31,10 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Compiled_Api_By_Name (Name : String) return Rtmidi_Api is
 
-      function Internal (Name : IC.char_array) return Rtmidi_Api with
-        Import        => True, Convention => C,
+      function Internal (Name : IC.char_array) return Rtmidi_Api
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_compiled_api_by_name";
 
    begin
@@ -42,9 +46,13 @@ package body Rtmidi is
 
       procedure Internal
         (Device      : RtMidiPtr;
-         Port_Number : IC.unsigned; -- if 0, the first available.
-         Port_Name   : IC.char_array) with
-        Import => True, Convention => C, External_Name => "rtmidi_open_port";
+         Port_Number : IC.unsigned;
+         -- if 0, the first available.
+         Port_Name   : IC.char_array)
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_open_port";
 
    begin
       Internal (Device, IC.unsigned (Number), IC.To_C (Name));
@@ -53,8 +61,10 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port (Device : RtMidiPtr; Name : String) is
 
-      procedure Internal (Device : RtMidiPtr; Port_Name : IC.char_array) with
-        Import        => True, Convention => C,
+      procedure Internal (Device : RtMidiPtr; Port_Name : IC.char_array)
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_open_virtual_port";
 
    begin
@@ -64,8 +74,11 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    procedure Close_Port (Device : RtMidiPtr) is
 
-      procedure Internal (Device : RtMidiPtr) with
-        Import => True, Convention => C, External_Name => "rtmidi_close_port";
+      procedure Internal (Device : RtMidiPtr)
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_close_port";
 
    begin
       Internal (Device);
@@ -74,8 +87,10 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Get_Port_Count (Device : RtMidiPtr) return Natural is
 
-      function Internal (Device : RtMidiPtr) return IC.unsigned with
-        Import        => True, Convention => C,
+      function Internal (Device : RtMidiPtr) return IC.unsigned
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_get_port_count";
 
    begin
@@ -90,15 +105,23 @@ package body Rtmidi is
       use type IC.int;
 
       function Internal_Get_Length
-        (Device  :     RtMidiPtr; Port_Number : IC.unsigned; Buf_Out : IC.char;
-         Buf_Len : out IC.int) return IC.int with
-        Import        => True, Convention => C,
+        (Device      : RtMidiPtr;
+         Port_Number : IC.unsigned;
+         Buf_Out     : IC.char;
+         Buf_Len     : out IC.int) return IC.int
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_get_port_name";
 
       function Internal_Get_Name
-        (Device  :     RtMidiPtr; Port_Number : IC.unsigned;
-         Buf_Out : out IC.char_array; Buf_Len : out IC.int) return IC.int with
-        Import        => True, Convention => C,
+        (Device      : RtMidiPtr;
+         Port_Number : IC.unsigned;
+         Buf_Out     : out IC.char_array;
+         Buf_Len     : out IC.int) return IC.int
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_get_port_name";
 
       Result        : IC.int := 0;
@@ -137,14 +160,17 @@ package body Rtmidi is
       use type IC.int;
 
       function Internal_Get_Apis
-        (Apis : in out Rtmidi_Api_Array; Apis_Size : IC.unsigned)
-         return IC.int with
-        Import        => True, Convention => C,
+        (Apis : in out Rtmidi_Api_Array; Apis_Size : IC.unsigned) return IC.int
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
       function Internal_Get_Number
-        (Apis : ICS.chars_ptr; Apis_Size : IC.unsigned) return IC.int with
-        Import        => True, Convention => C,
+        (Apis : ICS.chars_ptr; Apis_Size : IC.unsigned) return IC.int
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_get_compiled_api";
 
       Number : IC.int := 0;
@@ -173,8 +199,11 @@ package body Rtmidi is
    ----------------------------------------------------------------------------
    function Get_Version return String is
 
-      function Internal return ICS.chars_ptr with
-        Import => True, Convention => C, External_Name => "rtmidi_get_version";
+      function Internal return ICS.chars_ptr
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_get_version";
    begin
       return ICS.Value (Internal);
    end Get_Version;
@@ -237,7 +266,7 @@ package body Rtmidi is
       Temp1 : Natural;
       Temp2 : Natural;
 
-      Hexa   : constant String  := "0123456789ABCDEF";
+      Hexa   : constant String := "0123456789ABCDEF";
       Result : Unbounded_String := Null_Unbounded_String;
    begin
 
@@ -247,9 +276,9 @@ package body Rtmidi is
 
       Temp2 := Value;
       while Temp2 > 0 loop
-         Temp1  := Temp2 mod 16;
+         Temp1 := Temp2 mod 16;
          Result := Hexa (Temp1 + 1) & Result;
-         Temp2  := Temp2 / 16;
+         Temp2 := Temp2 / 16;
       end loop;
 
       if Pad and then (Length (Result) mod 2) /= 0 then

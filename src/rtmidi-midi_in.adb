@@ -10,17 +10,16 @@ package body Rtmidi.Midi_In is
 
    ----------------------------------------------------------------------------
    procedure Open_Port
-     (Self : in out Midi_In'Class; Number : Natural := 0;
-      Name :        String := "RtMidi Input")
-   is
+     (Self   : in out Midi_In'Class;
+      Number : Natural := 0;
+      Name   : String := "RtMidi Input") is
    begin
       Open_Port (Self.Device, Number, Name);
    end Open_Port;
 
    ----------------------------------------------------------------------------
    procedure Open_Virtual_Port
-     (Self : in out Midi_In'Class; Name : String := "RtMidi Input")
-   is
+     (Self : in out Midi_In'Class; Name : String := "RtMidi Input") is
    begin
       Open_Virtual_Port (Self.Device, Name);
    end Open_Virtual_Port;
@@ -39,8 +38,7 @@ package body Rtmidi.Midi_In is
 
    ----------------------------------------------------------------------------
    function Get_Port_Name
-     (Self : Midi_In'Class; Number : Natural) return String
-   is
+     (Self : Midi_In'Class; Number : Natural) return String is
    begin
       return Get_Port_Name (Self.Device, Number);
    end Get_Port_Name;
@@ -48,8 +46,10 @@ package body Rtmidi.Midi_In is
    ----------------------------------------------------------------------------
    procedure Create (Self : in out Midi_In'Class) is
 
-      function Internal return RtMidiPtr with
-        Import        => True, Convention => C,
+      function Internal return RtMidiPtr
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_create_default";
 
    begin
@@ -63,15 +63,20 @@ package body Rtmidi.Midi_In is
 
    ----------------------------------------------------------------------------
    procedure Create
-     (Self             : in out Midi_In'Class; Api : Rtmidi_Api := Unspecified;
-      Client_Name      :        String   := "RtMidi Input Client";
-      Queue_Size_Limit :        Positive := 100)
+     (Self             : in out Midi_In'Class;
+      Api              : Rtmidi_Api := Unspecified;
+      Client_Name      : String := "RtMidi Input Client";
+      Queue_Size_Limit : Positive := 100)
    is
 
       function Internal
-        (Api              : Rtmidi_Api; Client_Name : IC.char_array;
-         Queue_Size_Limit : IC.unsigned) return RtMidiPtr with
-        Import => True, Convention => C, External_Name => "rtmidi_in_create";
+        (Api              : Rtmidi_Api;
+         Client_Name      : IC.char_array;
+         Queue_Size_Limit : IC.unsigned) return RtMidiPtr
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "rtmidi_in_create";
 
       Name : IC.char_array := IC.To_C (Client_Name, True);
    begin
@@ -86,8 +91,8 @@ package body Rtmidi.Midi_In is
    ----------------------------------------------------------------------------
    procedure Free (Self : in out Midi_In'Class) is
 
-      procedure Internal (Device : RtMidiPtr) with
-        Import => True, Convention => C, External_Name => "rtmidi_in_free";
+      procedure Internal (Device : RtMidiPtr)
+      with Import => True, Convention => C, External_Name => "rtmidi_in_free";
 
    begin
       Internal (Self.Device);
@@ -97,8 +102,10 @@ package body Rtmidi.Midi_In is
    ----------------------------------------------------------------------------
    function Get_Current_Api (Self : Midi_In'Class) return Rtmidi_Api is
 
-      function Internal (Device : RtMidiPtr) return Rtmidi_Api with
-        Import        => True, Convention => C,
+      function Internal (Device : RtMidiPtr) return Rtmidi_Api
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_get_current_api";
 
    begin
@@ -107,27 +114,37 @@ package body Rtmidi.Midi_In is
 
    ----------------------------------------------------------------------------
    procedure Ignore_Types
-     (Self      : in out Midi_In'Class; Midi_Sysex : Boolean := True;
-      Midi_Time :        Boolean := True; Midi_Sense : Boolean := True)
+     (Self       : in out Midi_In'Class;
+      Midi_Sysex : Boolean := True;
+      Midi_Time  : Boolean := True;
+      Midi_Sense : Boolean := True)
    is
 
       procedure Internal
-        (Device     : RtMidiPtr; Midi_Sysex : IC.C_bool; Midi_Time : IC.C_bool;
-         Midi_Sense : IC.C_bool) with
-        Import        => True, Convention => C,
+        (Device     : RtMidiPtr;
+         Midi_Sysex : IC.C_bool;
+         Midi_Time  : IC.C_bool;
+         Midi_Sense : IC.C_bool)
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_ignore_types";
 
    begin
       Internal
-        (Self.Device, IC.C_bool (Midi_Sysex), IC.C_bool (Midi_Time),
+        (Self.Device,
+         IC.C_bool (Midi_Sysex),
+         IC.C_bool (Midi_Time),
          IC.C_bool (Midi_Sense));
    end Ignore_Types;
 
    ----------------------------------------------------------------------------
    procedure Cancel_Callback (Self : in out Midi_In'Class) is
 
-      procedure Internal (Device : RtMidiPtr) with
-        Import        => True, Convention => C,
+      procedure Internal (Device : RtMidiPtr)
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_cancel_callback";
 
    begin
@@ -145,8 +162,10 @@ package body Rtmidi.Midi_In is
 
       function Internal
         (Device : RtMidiPtr; Msg : out Message; size : out IC.size_t)
-         return IC.double with
-        Import        => True, Convention => C,
+         return IC.double
+      with
+        Import => True,
+        Convention => C,
         External_Name => "rtmidi_in_get_message";
 
       --  SYSEX messages maximum size is 1_024
@@ -189,23 +208,24 @@ package body Rtmidi.Midi_In is
    end Put_Message;
 
    ----------------------------------------------------------------------------
-   function Success (Self : Midi_In'Class) return Boolean is
-     (Success (Self.Device));
+   function Success (Self : Midi_In'Class) return Boolean
+   is (Success (Self.Device));
 
    ----------------------------------------------------------------------------
-   function Error_Message (Self : Midi_In'Class) return String is
-     (Error_Message (Self.Device));
+   function Error_Message (Self : Midi_In'Class) return String
+   is (Error_Message (Self.Device));
 
    ----------------------------------------------------------------------------
-   function Callback_Already_Set (Self : Midi_In'Class) return Boolean is
-     (Self.Callback_Is_Set);
+   function Callback_Already_Set (Self : Midi_In'Class) return Boolean
+   is (Self.Callback_Is_Set);
 
    ----------------------------------------------------------------------------
-   function Valid (Self : Midi_In'Class) return Boolean is
-     (Self.Device /= null);
+   function Valid (Self : Midi_In'Class) return Boolean
+   is (Self.Device /= null);
 
    ----------------------------------------------------------------------------
-   overriding procedure Finalize (Self : in out Midi_In) is
+   overriding
+   procedure Finalize (Self : in out Midi_In) is
    begin
       if Self.Valid then
          Self.Free;
