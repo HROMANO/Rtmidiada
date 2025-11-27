@@ -19,6 +19,8 @@ package body Rtmidi.Midi_In.Simple_Callback is
      (Self : in out Midi_In'Class; Callback : Callback_Type)
    is
 
+      type Message_1024 is new Message (1 .. 1024);
+
       procedure Internal
         (Device   : RtMidiPtr;
          Callback : System.Address;
@@ -30,18 +32,19 @@ package body Rtmidi.Midi_In.Simple_Callback is
 
       procedure Wrapper
         (Delta_Time : IC.double;
-         Buffer     : IC.char_array;
+         Buffer     : Message_1024;
          Len        : IC.size_t;
          Infos      : Infos_Record_Access)
       with Convention => C;
 
       procedure Wrapper
         (Delta_Time : IC.double;
-         Buffer     : IC.char_array;
+         Buffer     : Message_1024;
          Len        : IC.size_t;
          Infos      : Infos_Record_Access) is
       begin
-         Infos.Real_Callback (Float (Delta_Time), To_Message (Buffer, Len));
+         Infos.Real_Callback
+           (Float (Delta_Time), Message (Buffer (1 .. Integer (Len))));
       end Wrapper;
 
    begin

@@ -13,7 +13,7 @@ package Rtmidi is
    type Byte is range 0 .. 255;
    for Byte'Size use 8;
 
-   type Message is array (Positive range <>) of aliased Byte
+   type Message is array (Positive range <>) of Byte
    with Pack, Convention => C;
 
    type Rtmidi_Api is
