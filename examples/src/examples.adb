@@ -13,22 +13,21 @@ with Callback;
 procedure Examples is
 
    Apis            : constant Rtmidi.Rtmidi_Api_Array :=
-                       Rtmidi.Get_Compiled_Apis;
+     Rtmidi.Get_Compiled_Apis;
    Midi_In_Array   : array (Apis'Range) of Rtmidi.Midi_In.Midi_In;
    Midi_Out_Array  : array (Apis'Range) of Rtmidi.Midi_Out.Midi_Out;
-   Number_Of_Ports : array (Apis'Range) of Natural    := [others => 0];
+   Number_Of_Ports : array (Apis'Range) of Natural := [others => 0];
 
    type String_10 is new String (1 .. 10);
 
-   package Callback_Integer_Package is new Rtmidi.Midi_In.Generic_Callbacks
-     (User_Data_Type => Integer);
+   package Callback_Integer_Package is new
+     Rtmidi.Midi_In.Generic_Callbacks (User_Data_Type => Integer);
 
-   package Callback_String_10_Package is new Rtmidi.Midi_In.Generic_Callbacks
-     (User_Data_Type => String_10);
+   package Callback_String_10_Package is new
+     Rtmidi.Midi_In.Generic_Callbacks (User_Data_Type => String_10);
 
    procedure Callback_Integer
-     (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access Integer)
-   is
+     (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access Integer) is
    begin
       User_Data.all := User_Data.all + 1;
 
@@ -48,8 +47,8 @@ procedure Examples is
       Put_Line (" - User data = " & String (User_Data.all));
    end Callback_String_10;
 
-   The_Integer   : aliased Integer         := 0;
-   The_String_10 : aliased String_10       := "abc       ";
+   The_Integer   : aliased Integer := 0;
+   The_String_10 : aliased String_10 := "abc       ";
    Msg           : constant Rtmidi.Message := [16#C0#, 16#10#];
 
 begin
@@ -74,14 +73,16 @@ begin
 
       for Port_In in 0 .. Number_Of_Ports (Api) - 1 loop
          Put_Line
-           ("Port name" & Natural'Image (Port_In) & ": " &
-              Midi_In_Array (Api).Get_Port_Name (Port_In));
+           ("Port name"
+            & Natural'Image (Port_In)
+            & ": "
+            & Midi_In_Array (Api).Get_Port_Name (Port_In));
       end loop;
 
       Midi_In_Array (Api).Open_Port (0, "First");
       Put_Line
-        ("Current API: " &
-           Rtmidi.Api_Display_Name (Midi_In_Array (Api).Get_Current_Api));
+        ("Current API: "
+         & Rtmidi.Api_Display_Name (Midi_In_Array (Api).Get_Current_Api));
 
       if Midi_In_Array (Api).Success then
          Put_Line ("Success");
@@ -99,14 +100,16 @@ begin
 
       for Port_Out in 0 .. Number_Of_Ports (Api) - 1 loop
          Put_Line
-           ("Port name" & Natural'Image (Port_Out) & ": " &
-              Midi_Out_Array (Api).Get_Port_Name (Port_Out));
+           ("Port name"
+            & Natural'Image (Port_Out)
+            & ": "
+            & Midi_Out_Array (Api).Get_Port_Name (Port_Out));
       end loop;
 
       Midi_Out_Array (Api).Open_Port (0, "First");
       Put_Line
-        ("Current API: " &
-           Rtmidi.Api_Display_Name (Midi_Out_Array (Api).Get_Current_Api));
+        ("Current API: "
+         & Rtmidi.Api_Display_Name (Midi_Out_Array (Api).Get_Current_Api));
 
       if Midi_Out_Array (Api).Success then
          Put_Line ("Success");
