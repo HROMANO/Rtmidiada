@@ -1,5 +1,3 @@
-pragma Ada_2012;
-
 private with Interfaces.C;
 private with Interfaces.C.Strings;
 private with System;
@@ -63,6 +61,8 @@ private
    type RtMidi is limited record
       Ptr           : System.Address;
       Data          : System.Address;
+      --  Callback_Proxy : System.Address;
+      --  Error_Callback_Proxy : System.Address;
       Ok            : Boolean;
       Error_Message : Interfaces.C.Strings.chars_ptr;
    end record

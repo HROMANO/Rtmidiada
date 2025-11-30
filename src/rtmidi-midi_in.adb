@@ -1,4 +1,3 @@
-pragma Ada_2022;
 private with Ada.Text_IO;
 
 private with Interfaces.C;

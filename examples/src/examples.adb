@@ -39,7 +39,7 @@ procedure Examples is
    procedure Callback_String_10
      (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access String_10)
    is
-      C : Character := User_Data.all (1);
+      C : constant Character := User_Data.all (1);
    begin
       for I in 1 .. User_Data'Length - 1 loop
          User_Data.all (I) := User_Data.all (I + 1);
