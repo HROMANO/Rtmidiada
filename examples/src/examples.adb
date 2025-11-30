@@ -39,16 +39,20 @@ procedure Examples is
    procedure Callback_String_10
      (Delta_Time : Float; Msg : Rtmidi.Message; User_Data : access String_10)
    is
+      C : Character := User_Data.all (1);
    begin
-      User_Data.all (1) := User_Data.all (2);
+      for I in 1 .. User_Data'Length - 1 loop
+         User_Data.all (I) := User_Data.all (I + 1);
+      end loop;
+      User_Data.all (User_Data'Length) := C;
 
       Put ("Delta = " & Delta_Time'Image & " - Message lu = ");
       Put (Rtmidi.To_String (Msg));
       Put_Line (" - User data = " & String (User_Data.all));
    end Callback_String_10;
 
-   The_Integer   : aliased Integer := 0;
-   The_String_10 : aliased String_10 := "abc       ";
+   The_Integer   : aliased Integer := 10;
+   The_String_10 : aliased String_10 := "Working!  ";
    Msg           : constant Rtmidi.Message := [16#C0#, 16#10#];
 
 begin
