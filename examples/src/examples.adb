@@ -168,7 +168,7 @@ begin
    Midi_Out_Array (1).Send_Message (Msg);
    delay 1.0;
 
-   --  Midi in without callback
+   --  Midi in without callback (loop will never end)
    --  Put_Line ("Switching to non callback.");
    --  loop
    --     Midi_In_Array (1).Put_Message;
