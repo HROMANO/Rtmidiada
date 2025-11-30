@@ -63,18 +63,6 @@ package Rtmidi.Midi_In is
    function Error_Message (Self : Midi_In'Class) return String
    with Pre => Self.Valid;
 
-   generic
-      type User_Data_Type is private;
-      Callback_Procedure :
-        not null access procedure
-          (Delta_Time : Float;
-           Msg        : Message;
-           User_Data  : access User_Data_Type);
-   procedure Set_Callback
-     (Self : in out Midi_In'Class; User_Data : access User_Data_Type);
-   --  with
-   --  Pre => Self.Callback_Already_Set = False;
-
    function Callback_Already_Set (Self : Midi_In'Class) return Boolean
    with Pre => Self.Valid;
 
