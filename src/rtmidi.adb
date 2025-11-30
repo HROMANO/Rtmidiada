@@ -47,7 +47,7 @@ package body Rtmidi is
       procedure Internal
         (Device      : RtMidiPtr;
          Port_Number : IC.unsigned;
-         -- if 0, the first available.
+         --  if 0, the first available.
          Port_Name   : IC.char_array)
       with
         Import => True,

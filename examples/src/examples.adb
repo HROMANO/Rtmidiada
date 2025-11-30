@@ -8,7 +8,7 @@ with Rtmidi.Midi_In.Generic_Callbacks;
 with Rtmidi.Midi_In.Simple_Callback;
 with Rtmidi.Midi_Out;
 
-with Callback;
+with Callbacks;
 
 procedure Examples is
 
@@ -140,7 +140,7 @@ begin
    New_Line;
    Put_Line ("No user data");
    Rtmidi.Midi_In.Simple_Callback.Set_Callback
-     (Midi_In_Array (1), Callback.cb'Access);
+     (Midi_In_Array (1), Callbacks.Example_Callback'Access);
    delay 5.0;
    Midi_In_Array (1).Cancel_Callback;
 

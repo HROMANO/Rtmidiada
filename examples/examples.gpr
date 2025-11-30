@@ -18,7 +18,7 @@ project Examples is
    package Linker is
       for Default_Switches ("Ada") use ("-lrtmidi");
    end Linker;
-   
+
    package Install is
       for Artifacts (".") use ("share");
    end Install;

@@ -2,12 +2,10 @@ pragma Ada_2022;
 private with Ada.Text_IO;
 
 private with Interfaces.C;
-private with Interfaces.C.Strings;
 
 package body Rtmidi.Midi_In is
 
    package IC renames Interfaces.C;
-   package ICS renames Interfaces.C.Strings;
 
    ----------------------------------------------------------------------------
    procedure Open_Port
@@ -79,7 +77,7 @@ package body Rtmidi.Midi_In is
         Convention => C,
         External_Name => "rtmidi_in_create";
 
-      Name : IC.char_array := IC.To_C (Client_Name, True);
+      Name : constant IC.char_array := IC.To_C (Client_Name, True);
    begin
       if Self.Device /= null then
          Self.Free;

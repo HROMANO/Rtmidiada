@@ -1,10 +1,8 @@
 private with Interfaces.C;
-private with Interfaces.C.Strings;
 
 package body Rtmidi.Midi_Out is
 
    package IC renames Interfaces.C;
-   package ICS renames Interfaces.C.Strings;
 
    ----------------------------------------------------------------------------
    procedure Open_Port
@@ -115,6 +113,7 @@ package body Rtmidi.Midi_Out is
         External_Name => "rtmidi_out_send_message";
 
       Result : IC.int;
+      pragma Unreferenced (Result);
    begin
       Result := Internal (Self.Device, Msg, Msg'Length);
    end Send_Message;
