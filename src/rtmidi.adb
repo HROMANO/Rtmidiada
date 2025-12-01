@@ -237,15 +237,11 @@ package body Rtmidi is
    function To_String (Msg : Message) return String is
 
       --  Message ensures a 2 character only conversion for To_Hex.
-      Result : String (1 .. (Msg'Length * 3 - 1));
+      Result : String (1 .. (Msg'Length * 3 - 1)) := (others => ' ');
 
    begin
       for i in Msg'Range loop
-         if i < Msg'Last then
-            Result (i * 3 - 2 .. i * 3) := To_Hex (Integer (Msg (i))) & " ";
-         else
             Result (i * 3 - 2 .. i * 3 - 1) := To_Hex (Integer (Msg (i)));
-         end if;
       end loop;
 
       return Result;

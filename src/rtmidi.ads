@@ -58,18 +58,6 @@ package Rtmidi is
 
 private
 
-   --  type RtMidi is limited record
-   --     Ptr           : System.Address;
-   --     Data          : System.Address;
-   --     --  Callback_Proxy : System.Address;
-   --     --  Error_Callback_Proxy : System.Address;
-   --     Ok            : Boolean;
-   --     Error_Message : Interfaces.C.Strings.chars_ptr;
-   --  end record
-   --  with Convention => C;
-   --
-   --  type RtMidiPtr is access all RtMidi;
-
    type RtMidiPtr is new System.Address;
 
    Null_RtMidiPtr : RtMidiPtr := RtMidiPtr (System.Null_Address);
