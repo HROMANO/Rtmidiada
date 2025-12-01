@@ -210,14 +210,27 @@ package body Rtmidi is
 
    ----------------------------------------------------------------------------
    function Success (Device : RtMidiPtr) return Boolean is
+
+      function Internal (Device : RtMidiPtr) return IC.C_bool
+        with
+          Import => True,
+          Convention => C,
+          External_Name => "ada_rtmidi_ok";
+
    begin
-      return Device.Ok;
+      return Boolean (Internal (Device));
    end Success;
 
    ----------------------------------------------------------------------------
    function Error_Message (Device : RtMidiPtr) return String is
+
+      function Internal (Device : RtMidiPtr) return ICS.chars_ptr
+        with
+          Import => True,
+          Convention => C,
+          External_Name => "ada_rtmidi_error_message";
    begin
-      return ICS.Value (Device.Error_Message);
+      return ICS.Value (Internal (Device));
    end Error_Message;
 
    ----------------------------------------------------------------------------

@@ -48,7 +48,7 @@ package Rtmidi.Midi_Out is
 private
 
    type Midi_Out is new Ada.Finalization.Limited_Controlled with record
-      Device : RtMidiPtr := null;
+      Device : RtMidiPtr := Null_RtMidiPtr;
    end record;
 
    procedure Free (Self : in out Midi_Out'Class)

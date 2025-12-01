@@ -71,7 +71,7 @@ package Rtmidi.Midi_In is
 private
 
    type Midi_In is new Ada.Finalization.Limited_Controlled with record
-      Device          : RtMidiPtr := null;
+      Device          : RtMidiPtr := Null_RtMidiPtr;
       Callback_Is_Set : Boolean := False;
    end record;
 

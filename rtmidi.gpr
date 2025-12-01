@@ -8,6 +8,7 @@ project Rtmidi is
    for Object_Dir use "obj/" & Rtmidi_Config.Build_Profile;
    for Create_Missing_Dirs use "True";
    for Library_Dir use "lib";
+   for Languages use ("ada", "c");
 
    type Library_Type_Type is ("relocatable", "static", "static-pic");
    Library_Type : Library_Type_Type :=

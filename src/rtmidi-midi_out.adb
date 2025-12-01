@@ -47,7 +47,7 @@ package body Rtmidi.Midi_Out is
         External_Name => "rtmidi_out_create_default";
 
    begin
-      if Self.Device /= null then
+      if Self.Device /= Null_RtMidiPtr then
          Self.Free;
       end if;
 
@@ -70,7 +70,7 @@ package body Rtmidi.Midi_Out is
         External_Name => "rtmidi_out_create";
 
    begin
-      if Self.Device /= null then
+      if Self.Device /= Null_RtMidiPtr then
          Self.Free;
       end if;
 
@@ -86,7 +86,7 @@ package body Rtmidi.Midi_Out is
 
    begin
       Internal (Self.Device);
-      Self.Device := null;
+      Self.Device := Null_RtMidiPtr;
    end Free;
 
    ----------------------------------------------------------------------------
@@ -128,7 +128,7 @@ package body Rtmidi.Midi_Out is
 
    ----------------------------------------------------------------------------
    function Valid (Self : Midi_Out'Class) return Boolean
-   is (Self.Device /= null);
+   is (Self.Device /= Null_RtMidiPtr);
 
    ----------------------------------------------------------------------------
    overriding

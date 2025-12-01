@@ -51,7 +51,7 @@ package body Rtmidi.Midi_In is
         External_Name => "rtmidi_in_create_default";
 
    begin
-      if Self.Device /= null then
+      if Self.Device /= Null_RtMidiPtr then
          Self.Free;
       end if;
 
@@ -78,7 +78,7 @@ package body Rtmidi.Midi_In is
 
       Name : constant IC.char_array := IC.To_C (Client_Name, True);
    begin
-      if Self.Device /= null then
+      if Self.Device /= Null_RtMidiPtr then
          Self.Free;
       end if;
 
@@ -94,7 +94,7 @@ package body Rtmidi.Midi_In is
 
    begin
       Internal (Self.Device);
-      Self.Device := null;
+      Self.Device := Null_RtMidiPtr;
    end Free;
 
    ----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ package body Rtmidi.Midi_In is
 
    ----------------------------------------------------------------------------
    function Valid (Self : Midi_In'Class) return Boolean
-   is (Self.Device /= null);
+   is (Self.Device /= Null_RtMidiPtr);
 
    ----------------------------------------------------------------------------
    overriding
