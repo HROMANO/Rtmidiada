@@ -46,7 +46,7 @@ procedure Examples is
       end loop;
       User_Data.all (User_Data'Length) := C;
 
-      Put ("Delta = " & Delta_Time'Image & " - Message lu = ");
+      Put ("Delta = " & Delta_Time'Image & " - Message read = ");
       Put (Rtmidi.To_String (Msg));
       Put_Line (" - User data = " & String (User_Data.all));
    end Callback_String_10;
