@@ -19,7 +19,7 @@ package body Rtmidi.Midi_In.Simple_Callback is
      (Self : in out Midi_In'Class; Callback : Callback_Type)
    is
 
-      type Message_1024 is new Message (1 .. 1024);
+      type Message_1024 is new Message (1 .. 1_024);
 
       procedure Internal
         (Device   : RtMidiPtr;

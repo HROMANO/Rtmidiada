@@ -212,10 +212,7 @@ package body Rtmidi is
    function Success (Device : RtMidiPtr) return Boolean is
 
       function Internal (Device : RtMidiPtr) return IC.C_bool
-        with
-          Import => True,
-          Convention => C,
-          External_Name => "ada_rtmidi_ok";
+      with Import => True, Convention => C, External_Name => "ada_rtmidi_ok";
 
    begin
       return Boolean (Internal (Device));
@@ -225,10 +222,10 @@ package body Rtmidi is
    function Error_Message (Device : RtMidiPtr) return String is
 
       function Internal (Device : RtMidiPtr) return ICS.chars_ptr
-        with
-          Import => True,
-          Convention => C,
-          External_Name => "ada_rtmidi_error_message";
+      with
+        Import => True,
+        Convention => C,
+        External_Name => "ada_rtmidi_error_message";
    begin
       return ICS.Value (Internal (Device));
    end Error_Message;
@@ -241,7 +238,7 @@ package body Rtmidi is
 
    begin
       for i in Msg'Range loop
-            Result (i * 3 - 2 .. i * 3 - 1) := To_Hex (Integer (Msg (i)));
+         Result (i * 3 - 2 .. i * 3 - 1) := To_Hex (Integer (Msg (i)));
       end loop;
 
       return Result;
